@@ -1,0 +1,127 @@
+@model gestionpaises.Models.Country
+
+@{
+    ViewData["Title"] = "Reportes";
+    var countriesList = ViewBag.CountriesList as List<gestionpaises.Models.Country>;
+    
+    var flagUrl = "";
+    if (Model != null)
+    {
+        if (!string.IsNullOrEmpty(Model.BanderaPath))
+        {
+            flagUrl = Model.BanderaPath.StartsWith("wwwroot") 
+                ? Model.BanderaPath.Substring("wwwroot".Length) 
+                : Model.BanderaPath;
+            flagUrl = flagUrl.Replace("\\", "/");
+            if (!flagUrl.Contains("/") && !flagUrl.Contains("\\"))
+            {
+                flagUrl = "/uploads/banderas/" + flagUrl;
+            }
+            if (!flagUrl.StartsWith("/"))
+            {
+                flagUrl = "/" + flagUrl;
+            }
+        }
+    }
+}
+
+<div class="dashboard-header">
+    <h2>Visualizador de Reportes del País</h2>
+</div>
+
+<div class="card" style="margin-bottom: 2rem;">
+    <h3 class="card-title" style="margin-bottom: 1rem;">Seleccionar País para el Reporte</h3>
+    <div class="flex gap-2" style="max-width: 500px;">
+        <select class="form-control" id="selectCountryReport" onchange="location.href='/Home/Reports/' + this.value" style="background: var(--bg-secondary); border: 1px solid var(--border-color);">
+            @if (countriesList != null)
+            {
+                foreach (var c in countriesList)
+                {
+                    <!option value="@c.Code" @(Model != null && Model.Code == c.Code ? "selected" : "")>@c.Name (@c.Code)</!option>
+                }
+            }
+        </select>
+    </div>
+</div>
+
+@if (Model != null)
+{
+    <div class="card" style="padding: 2.5rem; border: 1px solid rgba(181, 86, 47, 0.25);">
+        
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid var(--border-color); padding-bottom: 1.5rem; margin-bottom: 2rem;">
+          <div>
+            <span class="badge badge-success" style="margin-bottom: 0.5rem;">Carga Criptográfica Válida</span>
+            <h1 class="font-xl" style="font-size: 2.25rem; font-family: var(--font-display);">@Model.Name</h1>
+            <p style="color: var(--accent-primary); font-weight: 600; font-size: 14px; margin: 0;">Código de Registro: @Model.Code (@Model.Code2)</p>
+          </div>
+          <div>
+            <!-- Real Flag Image Card Container -->
+            <div style="border: 1px solid var(--border-color); border-radius: var(--border-radius-md); padding: 4px; background: var(--bg-primary); width: 140px; height: 90px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                @if (!string.IsNullOrEmpty(flagUrl))
+                {
+                    <img src="@flagUrl" alt="Bandera de @Model.Name" style="max-width: 100%; max-height: 100%; object-fit: contain;" onerror="handleFlagError(this, 'md');" />
+                }
+                else
+                {
+                    <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='90' viewBox='0 0 140 90'><rect width='100%' height='100%' fill='%23edeae4'/><text x='50%' y='55%' font-family='sans-serif' font-size='16' fill='%238d8a80' text-anchor='middle' dominant-baseline='middle'>N/D</text></svg>" alt="" style="max-width: 100%; max-height: 100%; object-fit: contain;" />
+                }
+            </div>
+          </div>
+        </div>
+
+        <div class="form-grid" style="display: grid; grid-template-columns: repeat(12, 1fr); gap: 1.25rem; margin-bottom: 2rem;">
+          
+          <div style="grid-column: span 4;">
+            <span style="font-size: 11px; text-transform: uppercase; color: var(--ink-secondary); display: block; margin-bottom: 4px;">Población (Population)</span>
+            <strong style="font-size: 1.25rem; color: var(--ink-primary);">@Model.Population.ToString("N0")</strong>
+          </div>
+
+          <div style="grid-column: span 4;">
+            <span style="font-size: 11px; text-transform: uppercase; color: var(--ink-secondary); display: block; margin-bottom: 4px;">Expectativa de Vida</span>
+            <strong style="font-size: 1.25rem; color: var(--ink-primary);">@(Model.LifeExpectancy.HasValue ? Model.LifeExpectancy.Value.ToString("F1") + " Años" : "N/D")</strong>
+          </div>
+
+          <div style="grid-column: span 4;">
+            <span style="font-size: 11px; text-transform: uppercase; color: var(--ink-secondary); display: block; margin-bottom: 4px;">Capital (ID de Ciudad)</span>
+            <strong style="font-size: 1.25rem; color: var(--ink-primary);">@(Model.Capital.HasValue ? Model.Capital.Value.ToString() : "N/D")</strong>
+          </div>
+
+          <div style="grid-column: span 4; margin-top: 1rem;">
+            <span style="font-size: 11px; text-transform: uppercase; color: var(--ink-secondary); display: block; margin-bottom: 4px;">Región Geográfica</span>
+            <strong style="font-size: 1rem; color: var(--ink-primary);">@Model.Region</strong>
+          </div>
+
+          <div style="grid-column: span 4; margin-top: 1rem;">
+            <span style="font-size: 11px; text-transform: uppercase; color: var(--ink-secondary); display: block; margin-bottom: 4px;">Área de Superficie</span>
+            <strong style="font-size: 1rem; color: var(--ink-primary);">@Model.SurfaceArea.ToString("N2") km²</strong>
+          </div>
+
+          <div style="grid-column: span 4; margin-top: 1rem;">
+            <span style="font-size: 11px; text-transform: uppercase; color: var(--ink-secondary); display: block; margin-bottom: 4px;">GNP (Producto Nacional)</span>
+            <strong style="font-size: 1rem; color: var(--ink-primary);">@(Model.GNP.HasValue ? "$" + Model.GNP.Value.ToString("N2") + " USD" : "N/D")</strong>
+          </div>
+
+          <div style="grid-column: span 12; margin-top: 1.5rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem;">
+            <span style="font-size: 11px; text-transform: uppercase; color: var(--ink-secondary); display: block; margin-bottom: 4px;">Forma de Gobierno y Jefe de Estado</span>
+            <p style="color: var(--ink-primary); margin: 0;">
+              <strong>@Model.GovernmentForm</strong> - Jefatura de Estado: <em>@(Model.HeadOfState ?? "N/D")</em>
+            </p>
+          </div>
+
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 10px;">
+          <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">Regresar al Inicio</a>
+          <button class="btn btn-primary" onclick="alert('Llamando a la acción de descarga...\nRetornando archivo PDF generado de @Model.Name')">
+            Descargar Reporte PDF
+          </button>
+        </div>
+
+      </div>
+}
+else
+{
+    <div class="card">
+        <p>No hay datos que mostrar.</p>
+    </div>
+}

@@ -1,195 +1,693 @@
+/* ==========================================================================
+   CONSOLIDATED STYLESHEET - site.all.css
+   Generated dynamically - GestionPaises.co
+   ========================================================================== */
+
+/* ========================================== 
+   File: globals\variables.css 
+   ========================================== */
 :root {
-    --gp-ink: #14213d;
-    --gp-ink-soft: #3d4a6b;
-    --gp-paper: #f7f5f0;
-    --gp-surface: #ffffff;
-    --gp-line: #e3ddd0;
-    --gp-accent: #b5562f;
-    --gp-accent-dark: #8a3f1f;
-    --gp-success: #3b6e4f;
-    --font-display: "Space Grotesk", sans-serif;
-    --font-body: "Inter", sans-serif;
+  /* Editorial Color Palette */
+  --bg-primary: #f7f5f0;         /* gp-paper: Warm light gray background */
+  --bg-secondary: #ffffff;       /* gp-surface: White cards / panels */
+  --bg-tertiary: #edeae4;        /* Slightly darker warm gray */
+  
+  /* Brand Accents */
+  --accent-primary: #b5562f;     /* gp-accent: Terracotta rust */
+  --accent-hover: #8a3f1f;       /* gp-accent-dark: Rust hover */
+  --accent-light: rgba(181, 86, 47, 0.08);
+  
+  --ink-primary: #14213d;        /* gp-ink: Deep navy for headings / main text */
+  --ink-secondary: #3d4a6b;      /* gp-ink-soft: Slate blue for body / secondary text */
+  --ink-muted: #8d8a80;          /* Warm gray for muted text */
+  
+  /* Semantic Colors */
+  --success: #3b6e4f;            /* gp-success: Forest green */
+  --success-bg: rgba(59, 110, 79, 0.08);
+  --success-border: rgba(59, 110, 79, 0.18);
+  
+  --danger: #c1121f;             /* Crimson Red */
+  --danger-bg: rgba(193, 18, 31, 0.08);
+  --danger-border: rgba(193, 18, 31, 0.18);
+  
+  --warning: #df7a15;
+  --warning-bg: rgba(223, 122, 21, 0.08);
+  --warning-border: rgba(223, 122, 21, 0.18);
+  
+  /* Borders and Border Radius */
+  --border-color: #e3ddd0;       /* gp-line: Warm border line */
+  --border-radius-sm: 4px;
+  --border-radius-md: 6px;
+  --border-radius-lg: 10px;
+  
+  /* Typography Scale */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-display: "Space Grotesk", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-body: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  
+  --font-xxl: 44px;
+  --font-xl: 28px;
+  --font-base: 14px;
+  --font-sm: 12px;
+  
+  /* Transitions */
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* Layout Dimensions */
+  --navbar-height: 70px;
+  --sidebar-width: 260px;
 }
 
-html, body {
-    min-height: 100%;
+
+/* ========================================== 
+   File: globals\reset.css 
+   ========================================== */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+  padding: 0;
 }
 
 body {
-    font-family: var(--font-body);
-    background-color: var(--gp-paper);
-    color: var(--gp-ink);
-    display: flex;
-    flex-direction: column;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  background-color: var(--bg-primary);
+  color: var(--ink-primary);
+  font-family: var(--font-body);
+  min-height: 100vh;
+  overflow-x: hidden;
 }
 
-h1, h2, h3, h4, .app-brand-text {
-    font-family: var(--font-display);
-    color: var(--gp-ink);
-    font-weight: 600;
-    letter-spacing: -0.01em;
-}
-
-h1 {
-    font-size: 1.85rem;
-    border-bottom: 3px solid var(--gp-accent);
-    padding-bottom: 0.5rem;
-    display: inline-block;
-    margin-bottom: 1.5rem;
+input, button, textarea, select {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
 }
 
 a {
-    color: var(--gp-accent-dark);
+  color: inherit;
+  text-decoration: none;
 }
 
-    a:hover {
-        color: var(--gp-accent);
-    }
-
-/* --- Navbar --- */
-.app-navbar {
-    background-color: var(--gp-ink);
-    padding: 0.85rem 0;
-    box-shadow: 0 2px 10px rgba(20, 33, 61, 0.15);
+ul, ol {
+  list-style: none;
 }
 
-.app-brand {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-    text-decoration: none;
+button {
+  cursor: pointer;
 }
 
-.app-brand-mark {
-    background-color: var(--gp-accent);
-    color: #fff;
-    font-family: var(--font-display);
-    font-weight: 700;
-    font-size: 0.95rem;
-    width: 36px;
-    height: 36px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+
+/* ========================================== 
+   File: globals\typography.css 
+   ========================================== */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap');
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--ink-primary);
+  font-family: var(--font-display);
+  line-height: 1.2;
 }
 
-.app-brand-text {
-    color: #fff;
-    font-size: 1.15rem;
+/* H1 matches --font-xxl (44px) - Bold (700) */
+h1, .font-xxl {
+  font-size: var(--font-xxl);
+  font-weight: 700;
+  letter-spacing: -0.02em;
 }
 
-.app-navbar .nav-link {
-    color: rgba(255, 255, 255, 0.75) !important;
-    font-weight: 500;
-    padding: 0.5rem 1rem;
-    border-radius: 6px;
-    transition: background-color 0.15s ease, color 0.15s ease;
+/* H2 matches --font-xl (28px) - Semibold (600) */
+h2, .font-xl {
+  font-size: var(--font-xl);
+  font-weight: 600;
+  letter-spacing: -0.01em;
 }
 
-    .app-navbar .nav-link:hover {
-        color: #fff !important;
-        background-color: rgba(255, 255, 255, 0.08);
-    }
-
-.app-navbar .navbar-toggler {
-    border-color: rgba(255, 255, 255, 0.3);
+p, body, td, th, input, label, button {
+  font-size: var(--font-base); /* 14px */
+  font-family: var(--font-body);
 }
 
-.app-navbar .navbar-toggler-icon {
-    filter: invert(1);
+p {
+  color: var(--ink-secondary);
 }
 
-/* --- Layout principal --- */
-.app-main {
-    flex: 1 0 auto;
-    padding: 2.25rem 0 3rem;
+.text-muted {
+  color: var(--ink-muted);
 }
 
-/* --- Tarjetas / tablas / formularios --- */
-.card,
-.table,
-form {
-    background-color: var(--gp-surface);
+.text-gradient {
+  background: linear-gradient(135deg, var(--accent-primary) 0%, var(--ink-primary) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+
+/* ========================================== 
+   File: globals\utilities.css 
+   ========================================== */
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.align-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+.justify-center { justify-content: center; }
+.gap-2 { gap: 0.5rem; }
+.gap-3 { gap: 0.75rem; }
+.gap-4 { gap: 1rem; }
+
+.grid { display: grid; }
+.w-full { width: 100%; }
+
+.p-4 { padding: 1rem; }
+.p-6 { padding: 1.5rem; }
+.m-0 { margin: 0; }
+.mb-2 { margin-bottom: 0.5rem; }
+.mb-4 { margin-bottom: 1rem; }
+.mb-6 { margin-bottom: 1.5rem; }
+.mt-4 { margin-top: 1rem; }
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 8px;
+  border-radius: var(--border-radius-sm);
+  font-size: var(--font-sm);
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.badge-success {
+  background-color: var(--success-bg);
+  color: var(--success);
+  border: 1px solid var(--success-border);
+}
+
+.badge-danger {
+  background-color: var(--danger-bg);
+  color: var(--danger);
+  border: 1px solid var(--danger-border);
+}
+
+
+/* ========================================== 
+   File: layout\navbar.css 
+   ========================================== */
+.navbar {
+  height: var(--navbar-height);
+  background-color: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+  padding: 0 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+}
+
+.navbar-brand {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.25rem;
+  color: var(--ink-primary);
+}
+
+.navbar-brand span {
+  color: var(--accent-primary);
+}
+
+.navbar-menu {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.navbar-menu .navbar-nav {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1.25rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.navbar-menu .navbar-nav .nav-item {
+  display: inline-block;
+}
+
+.navbar-menu .navbar-nav .nav-link {
+  color: var(--ink-secondary) !important;
+  font-weight: 500;
+  font-family: var(--font-body);
+  font-size: var(--font-base);
+  transition: color var(--transition-fast);
+  padding: 0.25rem 0.5rem;
+}
+
+.navbar-menu .navbar-nav .nav-link:hover {
+  color: var(--accent-primary) !important;
+  text-decoration: none;
+}
+
+.navbar-menu .navbar-nav .btn-link {
+  background: none !important;
+  border: none !important;
+  padding: 0 !important;
+  color: var(--ink-secondary) !important;
+  text-decoration: none !important;
+  font-weight: 500 !important;
+}
+
+.navbar-menu .navbar-nav .btn-link:hover {
+  color: var(--accent-primary) !important;
+}
+
+.navbar-link {
+  color: var(--ink-secondary);
+  font-weight: 500;
+  transition: color var(--transition-fast);
+}
+
+.navbar-link:hover, .navbar-link.active {
+  color: var(--ink-primary);
+}
+
+
+/* ========================================== 
+   File: layout\sidebar.css 
+   ========================================== */
+.sidebar {
+  width: var(--sidebar-width);
+  height: calc(100vh - var(--navbar-height));
+  background-color: var(--bg-secondary);
+  border-right: 1px solid var(--border-color);
+  position: fixed;
+  top: var(--navbar-height);
+  left: 0;
+  z-index: 90;
+  padding: 1.5rem 1rem;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: var(--border-radius-md);
+  color: var(--ink-secondary);
+  font-weight: 500;
+  transition: all var(--transition-fast);
+}
+
+.sidebar-link:hover {
+  background-color: var(--bg-primary);
+  color: var(--ink-primary);
+}
+
+.sidebar-link.active {
+  background-color: var(--accent-light);
+  color: var(--accent-primary);
+  font-weight: 600;
+  border-left: 3px solid var(--accent-primary);
+}
+
+
+/* ========================================== 
+   File: layout\dashboard.css 
+   ========================================== */
+.dashboard-layout {
+  padding-top: var(--navbar-height);
+  padding-left: var(--sidebar-width);
+  min-height: 100vh;
+}
+
+.dashboard-content {
+  padding: 2.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.dashboard-header {
+  margin-bottom: 2rem;
+}
+
+
+/* ========================================== 
+   File: layout\footer.css 
+   ========================================== */
+.footer {
+  background-color: transparent;
+  border-top: 1px solid var(--border-color);
+  padding: 1.25rem 2rem;
+  text-align: center;
+  color: var(--ink-secondary);
+  font-size: var(--font-sm);
+  margin-top: 4rem;
+}
+
+
+/* ========================================== 
+   File: components\button.css 
+   ========================================== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 20px;
+  border-radius: var(--border-radius-md);
+  font-weight: 600;
+  font-size: var(--font-base);
+  transition: all var(--transition-fast);
+  border: 1px solid transparent;
+  user-select: none;
+}
+
+/* Primary Button (Terracotta) */
+.btn-primary {
+  background-color: var(--accent-primary);
+  color: #ffffff;
+}
+
+.btn-primary:hover {
+  background-color: var(--accent-hover);
+}
+
+/* Secondary Button (Bordered Ink) */
+.btn-secondary {
+  background-color: transparent;
+  border-color: var(--border-color);
+  color: var(--ink-primary);
+}
+
+.btn-secondary:hover {
+  border-color: var(--ink-primary);
+  background-color: rgba(20, 33, 61, 0.04);
+}
+
+/* Danger Button (Warm Red Outline) */
+.btn-danger {
+  background-color: transparent;
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+.btn-danger:hover {
+  background-color: var(--danger-bg);
+}
+
+
+/* ========================================== 
+   File: components\input.css 
+   ========================================== */
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 1.5rem;
+}
+
+.input-label {
+  font-size: var(--font-base);
+  font-weight: 500;
+  color: var(--ink-primary);
+}
+
+.form-control {
+  width: 100%;
+  padding: 12px 16px;
+  font-size: var(--font-base);
+  border-radius: var(--border-radius-md);
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  color: var(--ink-primary);
+  transition: all var(--transition-fast);
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px rgba(181, 86, 47, 0.15);
+}
+
+.form-control::placeholder {
+  color: var(--ink-muted);
+}
+
+
+/* ========================================== 
+   File: components\card.css 
+   ========================================== */
+.card {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-lg);
+  padding: 2rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -1px rgba(0, 0, 0, 0.01);
+}
+
+.card-title {
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 0.75rem;
+}
+
+
+/* ========================================== 
+   File: components\table.css 
+   ========================================== */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: var(--border-radius-lg);
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-secondary);
 }
 
 .table {
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 1px 3px rgba(20, 33, 61, 0.08);
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
 }
 
-    .table thead th {
-        background-color: var(--gp-ink);
-        color: #fff;
-        font-weight: 500;
-        font-size: 0.85rem;
-        text-transform: uppercase;
-        letter-spacing: 0.04em;
-        border: none;
-        padding: 0.85rem 1rem;
-    }
-
-    .table tbody td {
-        padding: 0.75rem 1rem;
-        border-color: var(--gp-line);
-        vertical-align: middle;
-    }
-
-    .table tbody tr:hover {
-        background-color: #faf7f2;
-    }
-
-.btn-primary {
-    background-color: var(--gp-accent);
-    border-color: var(--gp-accent);
+.table th {
+  padding: 16px 20px;
+  font-weight: 600;
+  color: var(--ink-secondary);
+  background-color: var(--bg-primary);
+  border-bottom: 1px solid var(--border-color);
 }
 
-    .btn-primary:hover {
-        background-color: var(--gp-accent-dark);
-        border-color: var(--gp-accent-dark);
-    }
-
-.btn-outline-primary {
-    color: var(--gp-accent-dark);
-    border-color: var(--gp-accent);
+.table td {
+  padding: 16px 20px;
+  color: var(--ink-primary);
+  border-bottom: 1px solid var(--border-color);
 }
 
-    .btn-outline-primary:hover {
-        background-color: var(--gp-accent);
-        border-color: var(--gp-accent);
-    }
-
-.form-control:focus,
-.form-select:focus {
-    border-color: var(--gp-accent);
-    box-shadow: 0 0 0 0.2rem rgba(181, 86, 47, 0.15);
+.table tr:last-child td {
+  border-bottom: none;
 }
 
-.alert-warning {
-    background-color: #fbf0e4;
-    border-color: #e8cfa8;
-    color: #6b4a1c;
+.table tbody tr:hover {
+  background-color: rgba(181, 86, 47, 0.01);
 }
 
-/* --- Footer --- */
-.app-footer {
-    background-color: var(--gp-ink);
-    color: rgba(255, 255, 255, 0.65);
-    padding: 1.25rem 0;
-    font-size: 0.875rem;
-    display: flex;
+.table-link-manage {
+  color: var(--accent-primary);
+  font-weight: 600;
+  transition: color var(--transition-fast);
 }
 
-    .app-footer .container {
-        display: flex;
-        justify-content: space-between;
-    }
+.table-link-manage:hover {
+  color: var(--accent-hover);
+  text-decoration: underline;
+}
 
-    .app-footer a {
-        color: rgba(255, 255, 255, 0.75);
-    }
+.table-link-drop {
+  color: var(--danger);
+  font-weight: 600;
+  transition: opacity var(--transition-fast);
+}
 
-        .app-footer a:hover {
-            color: #fff;
-        }
+.table-link-drop:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
+
+/* ========================================== 
+   File: components\modal.css 
+   ========================================== */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(20, 33, 61, 0.4);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-container {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-lg);
+  width: 90%;
+  max-width: 500px;
+  padding: 2rem;
+  box-shadow: 0 20px 25px -5px rgba(20,33,61,0.1);
+}
+
+
+/* ========================================== 
+   File: components\form.css 
+   ========================================== */
+.form-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 1.5rem;
+}
+
+
+/* ========================================== 
+   File: components\alert.css 
+   ========================================== */
+.alert {
+  padding: 16px 20px;
+  border-radius: var(--border-radius-md);
+  font-size: var(--font-base);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 1.25rem;
+  border: 1px solid transparent;
+}
+
+.alert-success {
+  background-color: var(--success-bg);
+  border-color: var(--success-border);
+  color: var(--success);
+}
+
+.alert-danger {
+  background-color: var(--danger-bg);
+  border-color: var(--danger-border);
+  color: var(--danger);
+}
+
+
+/* ========================================== 
+   File: pages\login.css 
+   ========================================== */
+.login-page {
+  display: flex;
+  min-height: 100vh;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at top right, rgba(181, 86, 47, 0.05), transparent 45%),
+              radial-gradient(circle at bottom left, rgba(59, 110, 79, 0.03), transparent 45%);
+}
+
+.login-card {
+  width: 100%;
+  max-width: 420px;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-lg);
+  padding: 2.5rem 2rem;
+  box-shadow: 0 20px 25px -5px rgba(20, 33, 61, 0.05);
+}
+
+
+/* ========================================== 
+   File: pages\home.css 
+   ========================================== */
+.home-hero {
+  padding: 3rem 2rem;
+  border-radius: var(--border-radius-lg);
+  background: linear-gradient(135deg, rgba(181, 86, 47, 0.04) 0%, rgba(20, 33, 61, 0.01) 100%);
+  border: 1px solid var(--border-color);
+  margin-bottom: 2.5rem;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1.5rem;
+}
+
+
+/* ========================================== 
+   File: pages\countries.css 
+   ========================================== */
+.countries-header-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+
+/* ========================================== 
+   File: pages\cities.css 
+   ========================================== */
+.cities-filter-panel {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+
+/* ========================================== 
+   File: pages\languages.css 
+   ========================================== */
+.languages-list-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+
+/* ========================================== 
+   File: pages\users.css 
+   ========================================== */
+.user-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+
+/* ========================================== 
+   File: pages\reports.css 
+   ========================================== */
+.reports-chart {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-lg);
+  padding: 1.5rem;
+  height: 300px;
+}
+
+
+

@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\geova\\source\\repos\\gestionpaises\\gestionpaises\\gestionpaises.csproj": {}
+    "E:\\Descargas\\EstilosGestionPaises\\gestionPaises\\gestionPaises\\gestionpaises.csproj": {}
   },
   "projects": {
-    "C:\\Users\\geova\\source\\repos\\gestionpaises\\gestionpaises\\gestionpaises.csproj": {
+    "E:\\Descargas\\EstilosGestionPaises\\gestionPaises\\gestionPaises\\gestionpaises.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\geova\\source\\repos\\gestionpaises\\gestionpaises\\gestionpaises.csproj",
+        "projectUniqueName": "E:\\Descargas\\EstilosGestionPaises\\gestionPaises\\gestionPaises\\gestionpaises.csproj",
         "projectName": "gestionpaises",
-        "projectPath": "C:\\Users\\geova\\source\\repos\\gestionpaises\\gestionpaises\\gestionpaises.csproj",
-        "packagesPath": "C:\\Users\\geova\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\geova\\source\\repos\\gestionpaises\\gestionpaises\\obj\\",
+        "projectPath": "E:\\Descargas\\EstilosGestionPaises\\gestionPaises\\gestionPaises\\gestionpaises.csproj",
+        "packagesPath": "C:\\Users\\sisoy\\.nuget\\packages\\",
+        "outputPath": "E:\\Descargas\\EstilosGestionPaises\\gestionPaises\\gestionPaises\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\geova\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\sisoy\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
