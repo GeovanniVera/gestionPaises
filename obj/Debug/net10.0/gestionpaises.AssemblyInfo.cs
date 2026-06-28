@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("gestionpaises")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c1eb11451314d562e3bc196c150ad461aed14e00")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ab27bff9eb0a6de357c283d4450affc72b090053")]
 [assembly: System.Reflection.AssemblyProductAttribute("gestionpaises")]
 [assembly: System.Reflection.AssemblyTitleAttribute("gestionpaises")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

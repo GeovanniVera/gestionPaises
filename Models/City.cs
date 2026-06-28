@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace gestionpaises.Models
 {
@@ -30,6 +31,7 @@ namespace gestionpaises.Models
 
         // Navigation property to the Country entity
         [ForeignKey("CountryCode")]
+        [ValidateNever]
         public virtual Country Country { get; set; } = null!;
     }
 }

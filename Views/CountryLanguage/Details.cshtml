@@ -1,0 +1,20 @@
+﻿@model gestionpaises.Models.CountryLanguage
+
+@{
+    ViewData["Title"] = "Detalle de idioma";
+}
+
+<h1>@Model.Language</h1>
+
+<dl class="row">
+    <dt class="col-sm-3">País</dt>
+    <dd class="col-sm-9">@Model.Country.Name</dd>
+
+    <dt class="col-sm-3">¿Es oficial?</dt>
+    <dd class="col-sm-9">@(Model.IsOfficial ? "Sí" : "No")</dd>
+
+    <dt class="col-sm-3">Porcentaje de hablantes</dt>
+    <dd class="col-sm-9">@Model.Percentage%</dd>
+</dl>
+
+<a asp-action="Index" class="btn btn-secondary">Volver al listado</a>

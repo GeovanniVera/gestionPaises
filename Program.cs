@@ -1,7 +1,9 @@
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using gestionpaises.Data;
 using gestionpaises.Models;
+using gestionpaises.Services;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,8 +23,36 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
+// --- Reemplaza el SignInManager default por el personalizado ---
+builder.Services.AddScoped<SignInManager<ApplicationUser>, CustomSignInManager>();
+
+builder.Services.AddScoped<ImageValidationService>();
+
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.Events.OnValidatePrincipal = async context =>
+    {
+        var userManager = context.HttpContext.RequestServices
+            .GetRequiredService<UserManager<ApplicationUser>>();
+
+        var sessionIdEnCookie = context.Principal?.FindFirst("SessionId")?.Value;
+        var userId = context.Principal?.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+        if (userId != null)
+        {
+            var usuario = await userManager.FindByIdAsync(userId);
+
+            if (usuario == null || usuario.SessionId != sessionIdEnCookie)
+            {
+                context.RejectPrincipal();
+                await context.HttpContext.SignOutAsync(IdentityConstants.ApplicationScheme);
+            }
+        }
+    };
+});
 
 var app = builder.Build();
 

@@ -65,6 +65,10 @@ namespace gestionpaises.Models
         [StringLength(2)]
         public string Code2 { get; set; } = string.Empty;
 
+        [Column("BanderaPath")]
+        [StringLength(255)]
+        public string? BanderaPath { get; set; }
+
         // Navigation properties
         public virtual ICollection<City> Cities { get; set; } = new List<City>();
         public virtual ICollection<CountryLanguage> CountryLanguages { get; set; } = new List<CountryLanguage>();

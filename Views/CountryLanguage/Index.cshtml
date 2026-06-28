@@ -1,5 +1,48 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model IEnumerable<gestionpaises.Models.CountryLanguage>
+
 @{
+    ViewData["Title"] = "Idiomas por país";
 }
+
+<h1>Idiomas por país</h1>
+
+@if (User.IsInRole("Editor") || User.IsInRole("Administrador"))
+{
+    <p>
+        <a asp-action="Create" class="btn btn-primary">Agregar idioma</a>
+    </p>
+}
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>País</th>
+            <th>Idioma</th>
+            <th>Oficial</th>
+            <th>Porcentaje</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Country.Name</td>
+                <td>@item.Language</td>
+                <td>@(item.IsOfficial ? "Sí" : "No")</td>
+                <td>@item.Percentage%</td>
+                <td>
+                    <a asp-action="Details" asp-route-countryCode="@item.CountryCode" asp-route-language="@item.Language" class="btn btn-sm btn-outline-secondary">Ver</a>
+                    @if (User.IsInRole("Editor") || User.IsInRole("Administrador"))
+                    {
+                        <a asp-action="Edit" asp-route-countryCode="@item.CountryCode" asp-route-language="@item.Language" class="btn btn-sm btn-outline-primary">Editar</a>
+                    }
+                    @if (User.IsInRole("Administrador"))
+                    {
+                        <a asp-action="Delete" asp-route-countryCode="@item.CountryCode" asp-route-language="@item.Language" class="btn btn-sm btn-outline-danger">Eliminar</a>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

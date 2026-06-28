@@ -1,0 +1,26 @@
+﻿@model gestionpaises.Models.CountryLanguage
+
+@{
+    ViewData["Title"] = "Eliminar idioma";
+}
+
+<h1>Eliminar idioma</h1>
+
+<div class="alert alert-warning">
+    ¿Estás seguro de que deseas eliminar este idioma del país?
+</div>
+
+<dl class="row">
+    <dt class="col-sm-3">País</dt>
+    <dd class="col-sm-9">@Model.Country.Name</dd>
+
+    <dt class="col-sm-3">Idioma</dt>
+    <dd class="col-sm-9">@Model.Language</dd>
+</dl>
+
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="CountryCode" />
+    <input type="hidden" asp-for="Language" />
+    <button type="submit" class="btn btn-danger">Confirmar eliminación</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+</form>

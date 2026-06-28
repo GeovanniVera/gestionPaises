@@ -1,6 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using Microsoft.EntityFrameworkCore;
 
 namespace gestionpaises.Models
 {
@@ -22,8 +23,8 @@ namespace gestionpaises.Models
         [Column("Percentage")]
         public decimal Percentage { get; set; }
 
-        // Navigation property to the Country entity
         [ForeignKey("CountryCode")]
+        [ValidateNever]
         public virtual Country Country { get; set; } = null!;
     }
 }
