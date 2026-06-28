@@ -61,6 +61,8 @@ wwwroot\lib\jquery\dist\jquery.slim.js
 wwwroot\lib\jquery\dist\jquery.slim.min.js
 wwwroot\lib\jquery\dist\jquery.slim.min.map
 wwwroot\lib\jquery\LICENSE.txt
+wwwroot\uploads\banderas\56cb87c0-2272-4cd2-9909-0751293ab649.png
+wwwroot\uploads\banderas\6226d3ee-76e7-48f9-9d2b-a557df3947a1.png
 C:\Users\geova\source\repos\gestionpaises\gestionpaises\wwwroot\css\site.css
 C:\Users\geova\source\repos\gestionpaises\gestionpaises\wwwroot\favicon.ico
 C:\Users\geova\source\repos\gestionpaises\gestionpaises\wwwroot\js\site.js
