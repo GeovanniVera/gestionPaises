@@ -1,22 +1,35 @@
 @page
 @model ResendEmailConfirmationModel
 @{
-    ViewData["Title"] = "Resend email confirmation";
+    ViewData["Title"] = "Reenviar confirmación de correo";
 }
 
-<h1>@ViewData["Title"]</h1>
-<h2>Enter your email.</h2>
-<hr />
-<div class="row">
-    <div class="col-md-4">
+<div class="login-page">
+    <div class="login-card">
+        <h1 class="font-xl mb-2">Reenviar confirmación de correo</h1>
+        <p class="text-muted mb-6">Ingresa tu correo y te reenviaremos el enlace de confirmación</p>
+
+        @if (!string.IsNullOrEmpty(Model.StatusMessage))
+        {
+            <div class="alert alert-success" role="alert">@Model.StatusMessage</div>
+        }
+
         <form method="post">
-            <div asp-validation-summary="All" class="text-danger" role="alert"></div>
-            <div class="form-floating mb-3">
-                <input asp-for="Input.Email" class="form-control" aria-required="true" placeholder="name@example.com" />
-                <label asp-for="Input.Email" class="form-label"></label>
+            <div asp-validation-summary="All" class="alert alert-danger" role="alert"></div>
+
+            <div class="field-group">
+                <label asp-for="Input.Email" class="input-label">Correo electrónico</label>
+                <input asp-for="Input.Email" class="form-control" aria-required="true" placeholder="nombre@ejemplo.com" />
                 <span asp-validation-for="Input.Email" class="text-danger"></span>
             </div>
-            <button type="submit" class="w-100 btn btn-lg btn-primary">Resend</button>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary w-full">Reenviar</button>
+            </div>
+
+            <div class="flex-col gap-2 mt-4">
+                <a asp-page="./Login" class="table-link-manage">Volver a iniciar sesión</a>
+            </div>
         </form>
     </div>
 </div>

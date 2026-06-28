@@ -70,10 +70,10 @@ public class ForgotPasswordModel : PageModel
                 values: new { area = "Identity", code },
                 protocol: Request.Scheme)!;
 
-            await _emailSender.SendEmailAsync(
-                Input.Email,
-                "Reset Password",
-                $"Please reset your password by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+           await _emailSender.SendEmailAsync(
+    Input.Email,
+    "Restablecer contraseña",
+    $"Por favor restablece tu contraseña <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>haciendo clic aquí</a>.");
 
             return RedirectToPage("./ForgotPasswordConfirmation");
         }

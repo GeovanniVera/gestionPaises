@@ -415,7 +415,11 @@ p {
 /* ========================================== 
    File: components\input.css 
    ========================================== */
-.input-group {
+/* Renombrado de .input-group a .field-group: Bootstrap define su propio
+   .input-group con selectores .input-group > .form-control que tienen
+   mayor especificidad (0,2,0) que la nuestra (0,1,0) y forzaban
+   width: 1% / flex: 1 1 auto en nuestros inputs, colapsándolos. */
+.field-group {
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -688,6 +692,3 @@ p {
   padding: 1.5rem;
   height: 300px;
 }
-
-
-

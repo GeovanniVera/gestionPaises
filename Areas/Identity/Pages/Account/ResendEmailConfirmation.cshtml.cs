@@ -36,6 +36,15 @@ public class ResendEmailConfirmationModel : PageModel
     public InputModel Input { get; set; } = default!;
 
     /// <summary>
+    ///     Mensaje de confirmación que se muestra en verde tras enviar (o simular el envío de)
+    ///     el correo de verificación. Se usa TempData en lugar de ModelState porque ModelState
+    ///     está reservado para errores reales de validación y siempre se renderiza en rojo
+    ///     en asp-validation-summary; este mensaje es un resultado exitoso, no un error.
+    /// </summary>
+    [TempData]
+    public string? StatusMessage { get; set; }
+
+    /// <summary>
     ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
     ///     directly from your code. This API may change or be removed in future releases.
     /// </summary>
@@ -64,7 +73,8 @@ public class ResendEmailConfirmationModel : PageModel
         var user = await _userManager.FindByEmailAsync(Input.Email);
         if (user == null)
         {
-            ModelState.AddModelError(string.Empty, "Verification email sent. Please check your email.");
+            // No revelamos si el correo existe o no: mismo mensaje de éxito en ambos casos.
+            StatusMessage = "Correo de verificación enviado. Por favor revisa tu correo.";
             return Page();
         }
 
@@ -78,10 +88,10 @@ public class ResendEmailConfirmationModel : PageModel
             protocol: Request.Scheme)!;
         await _emailSender.SendEmailAsync(
             Input.Email,
-            "Confirm your email",
-            $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+            "Confirma tu correo",
+            $"Por favor confirma tu cuenta <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>haciendo clic aquí</a>.");
 
-        ModelState.AddModelError(string.Empty, "Verification email sent. Please check your email.");
+        StatusMessage = "Correo de verificación enviado. Por favor revisa tu correo.";
         return Page();
     }
 }

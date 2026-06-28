@@ -4,6 +4,7 @@ using gestionpaises.Models;
 using gestionpaises.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,7 +18,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 // --- Identity con roles habilitados ---
 builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
 {
-    options.SignIn.RequireConfirmedAccount = false;
+    options.SignIn.RequireConfirmedAccount = true;
     options.Password.RequireNonAlphanumeric = true;
     options.Password.RequiredLength = 8;
 })
@@ -28,6 +29,9 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
 builder.Services.AddScoped<SignInManager<ApplicationUser>, CustomSignInManager>();
 
 builder.Services.AddScoped<ImageValidationService>();
+
+// --- Envío de correo real vía SMTP (MailHog en desarrollo) ---
+builder.Services.AddTransient<IEmailSender, SmtpEmailSender>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();

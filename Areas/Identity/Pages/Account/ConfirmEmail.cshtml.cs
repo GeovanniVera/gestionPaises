@@ -39,12 +39,23 @@ public class ConfirmEmailModel : PageModel
         var user = await _userManager.FindByIdAsync(userId);
         if (user == null)
         {
-            return NotFound($"Unable to load user with ID '{userId}'.");
+            return NotFound($"No se pudo encontrar el usuario con ID '{userId}'.");
         }
 
         code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));
         var result = await _userManager.ConfirmEmailAsync(user, code);
-        StatusMessage = result.Succeeded ? "Thank you for confirming your email." : "Error confirming your email.";
+
+        if (result.Succeeded)
+        {
+            // El rol de menor privilegio se otorga solo hasta que la identidad
+            // (correo) quedó verificada, no en el momento del registro.
+            if (!await _userManager.IsInRoleAsync(user, "Consulta"))
+            {
+                await _userManager.AddToRoleAsync(user, "Consulta");
+            }
+        }
+
+        StatusMessage = result.Succeeded ? "Gracias por confirmar tu correo." : "Error al confirmar tu correo.";
         return Page();
     }
 }
