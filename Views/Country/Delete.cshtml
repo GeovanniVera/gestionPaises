@@ -1,7 +1,22 @@
-﻿@model gestionpaises.Models.Country
+@model gestionpaises.Models.Country
 
 @{
     ViewData["Title"] = "Eliminar país";
+
+    string TraducirContinente(string continent)
+    {
+        return continent switch
+        {
+            "Asia" => "Asia",
+            "Europe" => "Europa",
+            "North America" => "América del Norte",
+            "Africa" => "África",
+            "Oceania" => "Oceanía",
+            "Antarctica" => "Antártida",
+            "South America" => "América del Sur",
+            _ => continent
+        };
+    }
 }
 
 <h1>Eliminar país</h1>
@@ -19,7 +34,7 @@
     <dd class="col-sm-9">@Model.Name</dd>
 
     <dt class="col-sm-3">Continente</dt>
-    <dd class="col-sm-9">@Model.Continent</dd>
+    <dd class="col-sm-9">@TraducirContinente(Model.Continent)</dd>
 </dl>
 
 <form asp-action="Delete" method="post">

@@ -72,7 +72,7 @@
         <div class="form-grid" style="display: grid; grid-template-columns: repeat(12, 1fr); gap: 1.25rem; margin-bottom: 2rem;">
           
           <div style="grid-column: span 4;">
-            <span style="font-size: 11px; text-transform: uppercase; color: var(--ink-secondary); display: block; margin-bottom: 4px;">Población (Population)</span>
+            <span style="font-size: 11px; text-transform: uppercase; color: var(--ink-secondary); display: block; margin-bottom: 4px;">Población</span>
             <strong style="font-size: 1.25rem; color: var(--ink-primary);">@Model.Population.ToString("N0")</strong>
           </div>
 
@@ -82,7 +82,7 @@
           </div>
 
           <div style="grid-column: span 4;">
-            <span style="font-size: 11px; text-transform: uppercase; color: var(--ink-secondary); display: block; margin-bottom: 4px;">Capital (ID de Ciudad)</span>
+            <span style="font-size: 11px; text-transform: uppercase; color: var(--ink-secondary); display: block; margin-bottom: 4px;">Capital (ID Ciudad)</span>
             <strong style="font-size: 1.25rem; color: var(--ink-primary);">@(Model.Capital.HasValue ? Model.Capital.Value.ToString() : "N/D")</strong>
           </div>
 
@@ -92,12 +92,12 @@
           </div>
 
           <div style="grid-column: span 4; margin-top: 1rem;">
-            <span style="font-size: 11px; text-transform: uppercase; color: var(--ink-secondary); display: block; margin-bottom: 4px;">Área de Superficie</span>
+            <span style="font-size: 11px; text-transform: uppercase; color: var(--ink-secondary); display: block; margin-bottom: 4px;">Superficie Territorial</span>
             <strong style="font-size: 1rem; color: var(--ink-primary);">@Model.SurfaceArea.ToString("N2") km²</strong>
           </div>
 
           <div style="grid-column: span 4; margin-top: 1rem;">
-            <span style="font-size: 11px; text-transform: uppercase; color: var(--ink-secondary); display: block; margin-bottom: 4px;">GNP (Producto Nacional)</span>
+            <span style="font-size: 11px; text-transform: uppercase; color: var(--ink-secondary); display: block; margin-bottom: 4px;">Producto Nacional Bruto (GNP)</span>
             <strong style="font-size: 1rem; color: var(--ink-primary);">@(Model.GNP.HasValue ? "$" + Model.GNP.Value.ToString("N2") + " USD" : "N/D")</strong>
           </div>
 
@@ -111,10 +111,13 @@
         </div>
 
         <div style="display: flex; justify-content: flex-end; gap: 10px;">
-          <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">Regresar al Inicio</a>
-          <button class="btn btn-primary" onclick="alert('Llamando a la acción de descarga...\nRetornando archivo PDF generado de @Model.Name')">
-            Descargar Reporte PDF
-          </button>
+            <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">Regresar al Inicio</a>
+          <a href="/Reporte/Pais/@Model.Name" target="_blank" class="btn btn-secondary" style="border-color: var(--accent-primary); color: var(--accent-primary);">
+                Visualizar Ruta HTML
+              </a>
+            <a href="/Reporte/DownloadPdf/@Model.Code" class="btn btn-primary">
+                Descargar Reporte PDF
+            </a>
         </div>
 
       </div>

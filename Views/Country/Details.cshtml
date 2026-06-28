@@ -21,6 +21,21 @@
             }
         }
     }
+
+    string TraducirContinente(string continent)
+    {
+        return continent switch
+        {
+            "Asia" => "Asia",
+            "Europe" => "Europa",
+            "North America" => "América del Norte",
+            "Africa" => "África",
+            "Oceania" => "Oceanía",
+            "Antarctica" => "Antártida",
+            "South America" => "América del Sur",
+            _ => continent
+        };
+    }
 }
 
 <div class="dashboard-header">
@@ -51,7 +66,7 @@
     <div class="form-grid" style="display: grid; grid-template-columns: repeat(12, 1fr); gap: 1.25rem; margin-bottom: 2rem;">
         <div style="grid-column: span 4;">
             <span style="font-size: 11px; text-transform: uppercase; color: var(--ink-secondary); display: block; margin-bottom: 4px;">Continente</span>
-            <strong style="font-size: 1.15rem; color: var(--ink-primary);">@Model!.Continent</strong>
+            <strong style="font-size: 1.15rem; color: var(--ink-primary);">@TraducirContinente(Model!.Continent)</strong>
         </div>
         <div style="grid-column: span 4;">
             <span style="font-size: 11px; text-transform: uppercase; color: var(--ink-secondary); display: block; margin-bottom: 4px;">Región</span>

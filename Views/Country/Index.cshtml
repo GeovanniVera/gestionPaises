@@ -2,6 +2,21 @@
 
 @{
     ViewData["Title"] = "Países";
+
+    string TraducirContinente(string continent)
+    {
+        return continent switch
+        {
+            "Asia" => "Asia",
+            "Europe" => "Europa",
+            "North America" => "América del Norte",
+            "Africa" => "África",
+            "Oceania" => "Oceanía",
+            "Antarctica" => "Antártida",
+            "South America" => "América del Sur",
+            _ => continent
+        };
+    }
 }
 
 <div class="countries-header-actions">
@@ -71,7 +86,7 @@
                     </td>
                     <td><strong>@item.Code</strong></td>
                     <td>@item.Name</td>
-                    <td>@item.Continent</td>
+                    <td>@TraducirContinente(item.Continent)</td>
                     <td>@item.Region</td>
                     <td>@item.Population.ToString("N0")</td>
                     <td>

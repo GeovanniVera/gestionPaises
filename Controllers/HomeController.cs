@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using gestionpaises.Data;
 using gestionpaises.Models;
+using Microsoft.AspNetCore.Authorization;
+using Rotativa.AspNetCore;
 
 namespace gestionpaises.Controllers
 {

@@ -1,3 +1,4 @@
+using Rotativa.AspNetCore;
 using gestionpaises.Data;
 using gestionpaises.Models;
 using gestionpaises.Services;
@@ -125,5 +126,8 @@ app.MapControllerRoute(
     .WithStaticAssets();
 
 app.MapRazorPages();
+
+// --- Configuración de Rotativa ---
+RotativaConfiguration.Setup(app.Environment.WebRootPath, "Rotativa");
 
 app.Run();

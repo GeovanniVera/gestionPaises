@@ -1,4 +1,4 @@
-﻿@model gestionpaises.Models.Country
+@model gestionpaises.Models.Country
 
 @{
     ViewData["Title"] = "Editar país";
@@ -16,51 +16,51 @@
     </div>
 
     <div class="form-group mb-3">
-        <label asp-for="Name" class="form-label"></label>
+        <label asp-for="Name" class="form-label">Nombre del País</label>
         <input asp-for="Name" class="form-control" />
         <span asp-validation-for="Name" class="text-danger"></span>
     </div>
 
     <div class="form-group mb-3">
-        <label asp-for="Continent" class="form-label"></label>
+        <label asp-for="Continent" class="form-label">Continente</label>
         <select asp-for="Continent" class="form-select">
             <option value="Asia">Asia</option>
-            <option value="Europe">Europe</option>
-            <option value="North America">North America</option>
-            <option value="Africa">Africa</option>
-            <option value="Oceania">Oceania</option>
-            <option value="Antarctica">Antarctica</option>
-            <option value="South America">South America</option>
+            <option value="Europe">Europa</option>
+            <option value="North America">América del Norte</option>
+            <option value="Africa">África</option>
+            <option value="Oceania">Oceanía</option>
+            <option value="Antarctica">Antártida</option>
+            <option value="South America">América del Sur</option>
         </select>
         <span asp-validation-for="Continent" class="text-danger"></span>
     </div>
 
     <div class="form-group mb-3">
-        <label asp-for="Region" class="form-label"></label>
+        <label asp-for="Region" class="form-label">Región Geográfica</label>
         <input asp-for="Region" class="form-control" />
         <span asp-validation-for="Region" class="text-danger"></span>
     </div>
 
     <div class="form-group mb-3">
-        <label asp-for="Population" class="form-label"></label>
-        <input asp-for="Population" class="form-control" />
+        <label asp-for="Population" class="form-label">Población</label>
+        <input asp-for="Population" class="form-control" type="number" />
         <span asp-validation-for="Population" class="text-danger"></span>
     </div>
 
     <div class="form-group mb-3">
-        <label asp-for="LocalName" class="form-label"></label>
+        <label asp-for="LocalName" class="form-label">Nombre Local</label>
         <input asp-for="LocalName" class="form-control" />
         <span asp-validation-for="LocalName" class="text-danger"></span>
     </div>
 
     <div class="form-group mb-3">
-        <label asp-for="GovernmentForm" class="form-label"></label>
+        <label asp-for="GovernmentForm" class="form-label">Forma de Gobierno</label>
         <input asp-for="GovernmentForm" class="form-control" />
         <span asp-validation-for="GovernmentForm" class="text-danger"></span>
     </div>
 
     <div class="form-group mb-3">
-        <label asp-for="Code2" class="form-label"></label>
+        <label asp-for="Code2" class="form-label">Código Alternativo (2 letras)</label>
         <input asp-for="Code2" class="form-control" maxlength="2" />
         <span asp-validation-for="Code2" class="text-danger"></span>
     </div>
@@ -69,7 +69,7 @@
     {
         <div class="mb-3">
             <label class="form-label d-block">Bandera actual</label>
-            <img src="~/uploads/banderas/@Model.BanderaPath" alt="Bandera actual" style="max-height:80px;" />
+            <img src="~/uploads/banderas/@Model.BanderaPath" alt="Bandera actual" style="max-height:80px; border: 1px solid var(--border-color); padding: 4px; border-radius: 4px; background: var(--bg-primary);" />
         </div>
     }
 
