@@ -1,10 +1,13 @@
-﻿<!DOCTYPE html>
+@using Microsoft.AspNetCore.Identity
+@using gestionpaises.Models
+@inject SignInManager<ApplicationUser> SignInManager
+
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Sistema de Países</title>
-    <script type="importmap"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -13,43 +16,58 @@
     <link rel="stylesheet" href="~/gestionpaises.styles.css" asp-append-version="true" />
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-lg app-navbar">
-            <div class="navbar-collapse collapse d-lg-inline-flex justify-content-between">
-                <ul class="navbar-nav flex-grow-1">
-                    <li class="nav-item">
-                        <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Inicio</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" asp-area="" asp-controller="Country" asp-action="Index">Países</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" asp-area="" asp-controller="City" asp-action="Index">Ciudades</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" asp-area="" asp-controller="CountryLanguage" asp-action="Index">Idiomas</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Privacy">Acerca de</a>
-                    </li>
-                </ul>
-                <partial name="_LoginPartial" />
-            </div>
-        </nav>
-    </header>
 
-    <main role="main" class="app-main">
-        <div class="container">
+    <!-- Navbar -->
+    <nav class="navbar">
+        <a asp-controller="Home" asp-action="Index" class="navbar-brand">GestionPaises<span>.co</span></a>
+        <div class="navbar-menu">
+            <partial name="_LoginPartial" />
+        </div>
+    </nav>
+
+    <!-- Sidebar and Layout conditions -->
+    @{
+        var controller = ViewContext.RouteData.Values["controller"]?.ToString();
+        var action = ViewContext.RouteData.Values["action"]?.ToString();
+        var area = ViewContext.RouteData.Values["area"]?.ToString();
+        bool isLoginPage = (controller == "Account" && (action == "Login" || action == "Register")) || area == "Identity";
+        bool showAdminLayout = SignInManager.IsSignedIn(User) && !isLoginPage;
+    }
+
+    @if (showAdminLayout)
+    {
+        <aside class="sidebar">
+            <nav class="sidebar-nav">
+                <a asp-controller="Home" asp-action="Index" class="sidebar-link @(controller == "Home" && action == "Index" ? "active" : "")">
+                    Dashboard
+                </a>
+                <a asp-controller="Country" asp-action="Index" class="sidebar-link @(controller == "Country" ? "active" : "")">
+                    Países
+                </a>
+                <a asp-controller="City" asp-action="Index" class="sidebar-link @(controller == "City" ? "active" : "")">
+                    Ciudades
+                </a>
+                <a asp-controller="CountryLanguage" asp-action="Index" class="sidebar-link @(controller == "CountryLanguage" ? "active" : "")">
+                    Lenguajes
+                </a>
+                <a asp-controller="Home" asp-action="Reports" class="sidebar-link @(controller == "Home" && action == "Reports" ? "active" : "")">
+                    Reportes
+                </a>
+            </nav>
+        </aside>
+    }
+
+    <!-- Content Layout -->
+    <div class="@(showAdminLayout ? "dashboard-layout" : "")" style="@(showAdminLayout ? "" : "padding-top: var(--navbar-height);")">
+        <main role="main" class="@(showAdminLayout ? "dashboard-content" : "")" style="@(showAdminLayout ? "" : "max-width: 1000px; margin: 0 auto; padding: 3rem 1.5rem;")">
             @RenderBody()
-        </div>
-    </main>
+        </main>
 
-    <footer class="app-footer">
-        <div class="container">
-            <span>&copy; 2026 Sistema de Países</span>
-            <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacidad</a>
-        </div>
-    </footer>
+        <footer class="footer">
+            <div>GestionPaises.co - Proyecto Parcial 2 y 3 - Seguridad en el Desarrollo de Aplicaciones</div>
+            <div style="margin-top: 5px; color: var(--ink-muted);">Diseño Editorial / Warm Paper</div>
+        </footer>
+    </div>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
