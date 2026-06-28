@@ -1,0 +1,28 @@
+﻿@model gestionpaises.Models.City
+
+@{
+    ViewData["Title"] = "Eliminar ciudad";
+}
+
+<h1>Eliminar ciudad</h1>
+
+<div class="alert alert-warning">
+    ¿Estás seguro de que deseas eliminar esta ciudad?
+</div>
+
+<dl class="row">
+    <dt class="col-sm-3">Nombre</dt>
+    <dd class="col-sm-9">@Model.Name</dd>
+
+    <dt class="col-sm-3">País</dt>
+    <dd class="col-sm-9">@Model.Country.Name</dd>
+
+    <dt class="col-sm-3">Distrito</dt>
+    <dd class="col-sm-9">@Model.District</dd>
+</dl>
+
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="ID" />
+    <button type="submit" class="btn btn-danger">Confirmar eliminación</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+</form>

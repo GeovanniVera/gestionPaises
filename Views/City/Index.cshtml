@@ -1,0 +1,48 @@
+﻿@model IEnumerable<gestionpaises.Models.City>
+
+@{
+    ViewData["Title"] = "Ciudades";
+}
+
+<h1>Ciudades</h1>
+
+@if (User.IsInRole("Editor") || User.IsInRole("Administrador"))
+{
+    <p>
+        <a asp-action="Create" class="btn btn-primary">Crear nueva ciudad</a>
+    </p>
+}
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>País</th>
+            <th>Distrito</th>
+            <th>Población</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Name</td>
+                <td>@item.Country.Name</td>
+                <td>@item.District</td>
+                <td>@item.Population.ToString("N0")</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.ID" class="btn btn-sm btn-outline-secondary">Ver</a>
+                    @if (User.IsInRole("Editor") || User.IsInRole("Administrador"))
+                    {
+                        <a asp-action="Edit" asp-route-id="@item.ID" class="btn btn-sm btn-outline-primary">Editar</a>
+                    }
+                    @if (User.IsInRole("Administrador"))
+                    {
+                        <a asp-action="Delete" asp-route-id="@item.ID" class="btn btn-sm btn-outline-danger">Eliminar</a>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

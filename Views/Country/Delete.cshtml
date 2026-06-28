@@ -1,0 +1,29 @@
+﻿@model gestionpaises.Models.Country
+
+@{
+    ViewData["Title"] = "Eliminar país";
+}
+
+<h1>Eliminar país</h1>
+
+<div class="alert alert-warning">
+    ¿Estás seguro de que deseas eliminar este país? Si tiene ciudades o idiomas
+    asociados, la eliminación será rechazada por la base de datos.
+</div>
+
+<dl class="row">
+    <dt class="col-sm-3">Código</dt>
+    <dd class="col-sm-9">@Model.Code</dd>
+
+    <dt class="col-sm-3">Nombre</dt>
+    <dd class="col-sm-9">@Model.Name</dd>
+
+    <dt class="col-sm-3">Continente</dt>
+    <dd class="col-sm-9">@Model.Continent</dd>
+</dl>
+
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="Code" />
+    <button type="submit" class="btn btn-danger">Confirmar eliminación</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+</form>

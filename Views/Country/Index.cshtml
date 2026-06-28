@@ -1,0 +1,50 @@
+﻿@model IEnumerable<gestionpaises.Models.Country>
+
+@{
+    ViewData["Title"] = "Países";
+}
+
+<h1>Países</h1>
+
+@if (User.IsInRole("Editor") || User.IsInRole("Administrador"))
+{
+    <p>
+        <a asp-action="Create" class="btn btn-primary">Crear nuevo país</a>
+    </p>
+}
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Código</th>
+            <th>Nombre</th>
+            <th>Continente</th>
+            <th>Región</th>
+            <th>Población</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Code</td>
+                <td>@item.Name</td>
+                <td>@item.Continent</td>
+                <td>@item.Region</td>
+                <td>@item.Population.ToString("N0")</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.Code" class="btn btn-sm btn-outline-secondary">Ver</a>
+                    @if (User.IsInRole("Editor") || User.IsInRole("Administrador"))
+                    {
+                        <a asp-action="Edit" asp-route-id="@item.Code" class="btn btn-sm btn-outline-primary">Editar</a>
+                    }
+                    @if (User.IsInRole("Administrador"))
+                    {
+                        <a asp-action="Delete" asp-route-id="@item.Code" class="btn btn-sm btn-outline-danger">Eliminar</a>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

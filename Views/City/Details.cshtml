@@ -1,0 +1,20 @@
+﻿@model gestionpaises.Models.City
+
+@{
+    ViewData["Title"] = "Detalle de ciudad";
+}
+
+<h1>@Model.Name</h1>
+
+<dl class="row">
+    <dt class="col-sm-3">País</dt>
+    <dd class="col-sm-9">@Model.Country.Name (@Model.CountryCode)</dd>
+
+    <dt class="col-sm-3">Distrito</dt>
+    <dd class="col-sm-9">@Model.District</dd>
+
+    <dt class="col-sm-3">Población</dt>
+    <dd class="col-sm-9">@Model.Population.ToString("N0")</dd>
+</dl>
+
+<a asp-action="Index" class="btn btn-secondary">Volver al listado</a>
