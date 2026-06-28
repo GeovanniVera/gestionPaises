@@ -1,48 +1,63 @@
-﻿@model IEnumerable<gestionpaises.Models.City>
+@model IEnumerable<gestionpaises.Models.City>
 
 @{
     ViewData["Title"] = "Ciudades";
 }
 
-<h1>Ciudades</h1>
+<div class="countries-header-actions">
+    <div>
+        <h2>Administración de Ciudades</h2>
+    </div>
+    @if (User.IsInRole("Editor") || User.IsInRole("Administrador"))
+    {
+        <a asp-action="Create" class="btn btn-primary">
+            + Agregar Ciudad
+        </a>
+    }
+</div>
 
-@if (User.IsInRole("Editor") || User.IsInRole("Administrador"))
-{
-    <p>
-        <a asp-action="Create" class="btn btn-primary">Crear nueva ciudad</a>
-    </p>
-}
-
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Nombre</th>
-            <th>País</th>
-            <th>Distrito</th>
-            <th>Población</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
+<div class="table-responsive">
+    <table class="table">
+        <thead>
             <tr>
-                <td>@item.Name</td>
-                <td>@item.Country.Name</td>
-                <td>@item.District</td>
-                <td>@item.Population.ToString("N0")</td>
-                <td>
-                    <a asp-action="Details" asp-route-id="@item.ID" class="btn btn-sm btn-outline-secondary">Ver</a>
-                    @if (User.IsInRole("Editor") || User.IsInRole("Administrador"))
-                    {
-                        <a asp-action="Edit" asp-route-id="@item.ID" class="btn btn-sm btn-outline-primary">Editar</a>
-                    }
-                    @if (User.IsInRole("Administrador"))
-                    {
-                        <a asp-action="Delete" asp-route-id="@item.ID" class="btn btn-sm btn-outline-danger">Eliminar</a>
-                    }
-                </td>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>País</th>
+                <th>Distrito</th>
+                <th>Población</th>
+                <th>Mantenimiento</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @if (!Model.Any())
+            {
+                <tr>
+                    <td colspan="6" style="text-align: center; color: var(--ink-secondary); padding: 2.5rem; font-style: italic;">No hay datos que mostrar.</td>
+                </tr>
+            }
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.ID</td>
+                    <td><strong>@item.Name</strong></td>
+                    <td>@(item.Country != null ? item.Country.Name : item.CountryCode)</td>
+                    <td>@item.District</td>
+                    <td>@item.Population.ToString("N0")</td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@item.ID" class="table-link-manage">Ver</a>
+                        @if (User.IsInRole("Editor") || User.IsInRole("Administrador"))
+                        {
+                            <span style="color: var(--border-color); margin: 0 4px;">|</span>
+                            <a asp-action="Edit" asp-route-id="@item.ID" class="table-link-manage">Editar</a>
+                        }
+                        @if (User.IsInRole("Administrador"))
+                        {
+                            <span style="color: var(--border-color); margin: 0 4px;">|</span>
+                            <a asp-action="Delete" asp-route-id="@item.ID" class="table-link-drop">Drop</a>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
