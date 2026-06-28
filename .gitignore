@@ -1,0 +1,18 @@
+## Carpetas de compilación
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+
+## Archivos de Visual Studio
+.vs/
+*.user
+*.suo
+
+## NuGet
+*.nupkg
+packages/
+
+## Archivos de configuración local sensible
+appsettings.Development.json
+*.pubxml
