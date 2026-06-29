@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -6,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using gestionpaises.Models;
 using gestionpaises.Repositories.Interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace gestionpaises.Controllers
 {
@@ -14,13 +16,20 @@ namespace gestionpaises.Controllers
     {
         private readonly ICountryLanguageRepository _countryLanguageRepository;
         private readonly ICountryRepository _countryRepository;
+        private readonly ILogger<CountryLanguageController> _logger;
+
+        // Expresión regular que permite letras del alfabeto, espacios, guiones, 
+        // la letra ñ/Ñ y todas las vocales con acento (áéíóúÁÉÍÓÚ).
+        private readonly string _patronIdiomaSeguro = @"^[A-Za-z\s-ñÑáéíóúÁÉÍÓÚ]+$";
 
         public CountryLanguageController(
             ICountryLanguageRepository countryLanguageRepository,
-            ICountryRepository countryRepository)
+            ICountryRepository countryRepository,
+            ILogger<CountryLanguageController> logger)
         {
             _countryLanguageRepository = countryLanguageRepository;
             _countryRepository = countryRepository;
+            _logger = logger;
         }
 
         // GET: CountryLanguage
@@ -36,13 +45,19 @@ namespace gestionpaises.Controllers
             return View(sortedLanguages);
         }
 
-        // GET: CountryLanguage/Details/MEX/Spanish
+        // GET: CountryLanguage/Details/MEX/Español
+        [HttpGet("CountryLanguage/Details/{countryCode}/{language}")]
         [Authorize(Roles = "Consulta,Editor,Administrador")]
         public async Task<IActionResult> Details(string countryCode, string language)
         {
-            if (countryCode == null || language == null)
+            countryCode = countryCode?.ToUpper() ?? string.Empty;
+
+            // Validación estricta para visualización: código de 3 caracteres e idioma limpio
+            if (string.IsNullOrEmpty(countryCode) || countryCode.Length != 3 ||
+                string.IsNullOrEmpty(language) || !Regex.IsMatch(language, _patronIdiomaSeguro))
             {
-                return NotFound();
+                _logger.LogWarning("Parámetros no válidos detectados en Details para {Code}/{Lang}", countryCode, language);
+                return BadRequest("Los parámetros proporcionados son inválidos o contienen caracteres no permitidos.");
             }
 
             var countryLanguage = await _countryLanguageRepository.GetByKeyAsync(countryCode, language);
@@ -69,7 +84,6 @@ namespace gestionpaises.Controllers
         [Authorize(Roles = "Editor,Administrador")]
         public async Task<IActionResult> Create(CountryLanguage countryLanguage)
         {
-            // Convertir código a mayúsculas y re-validar
             countryLanguage.CountryCode = countryLanguage.CountryCode?.ToUpper() ?? string.Empty;
             ModelState.Remove("CountryCode");
             TryValidateModel(countryLanguage);
@@ -94,11 +108,15 @@ namespace gestionpaises.Controllers
             return View(countryLanguage);
         }
 
-        // GET: CountryLanguage/Edit/MEX/Spanish
+        // GET: CountryLanguage/Edit/MEX/Español
+        [HttpGet("CountryLanguage/Edit/{countryCode}/{language}")]
         [Authorize(Roles = "Editor,Administrador")]
         public async Task<IActionResult> Edit(string countryCode, string language)
         {
-            if (countryCode == null || language == null)
+            countryCode = countryCode?.ToUpper() ?? string.Empty;
+
+            if (string.IsNullOrEmpty(countryCode) || countryCode.Length != 3 ||
+                string.IsNullOrEmpty(language) || !Regex.IsMatch(language, _patronIdiomaSeguro))
             {
                 return NotFound();
             }
@@ -115,16 +133,23 @@ namespace gestionpaises.Controllers
             return View(countryLanguage);
         }
 
-        // POST: CountryLanguage/Edit/MEX/Spanish
-        [HttpPost]
+        // POST: CountryLanguage/Edit/MEX/Español
+        [HttpPost("CountryLanguage/Edit/{countryCode}/{language}")]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Editor,Administrador")]
         public async Task<IActionResult> Edit(string countryCode, string language, CountryLanguage countryLanguage)
         {
+            countryCode = countryCode?.ToUpper() ?? string.Empty;
+            countryLanguage.CountryCode = countryLanguage.CountryCode?.ToUpper() ?? string.Empty;
+
             if (countryCode != countryLanguage.CountryCode || language != countryLanguage.Language)
             {
                 return NotFound();
             }
+
+            ModelState.Remove("CountryCode");
+            ModelState.Remove("Language");
+            TryValidateModel(countryLanguage);
 
             if (ModelState.IsValid)
             {
@@ -150,11 +175,16 @@ namespace gestionpaises.Controllers
             return View(countryLanguage);
         }
 
-        // GET: CountryLanguage/Delete/MEX/Spanish
+        // GET: CountryLanguage/Delete/BEL/<script>...
+        // Usamos el parámetro comodín {*language} para capturar cadenas complejas con '/' de forma nativa
+        [HttpGet("CountryLanguage/Delete/{countryCode}/{*language}")]
         [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> Delete(string countryCode, string language)
         {
-            if (countryCode == null || language == null)
+            countryCode = countryCode?.ToUpper() ?? string.Empty;
+
+            // Al eliminar, omitimos el filtro Regex estricto para posibilitar el purgado de datos hostiles
+            if (string.IsNullOrEmpty(countryCode) || countryCode.Length != 3 || string.IsNullOrEmpty(language))
             {
                 return NotFound();
             }
@@ -169,17 +199,46 @@ namespace gestionpaises.Controllers
             return View(countryLanguage);
         }
 
-        // POST: CountryLanguage/Delete/MEX/Spanish
-        [HttpPost, ActionName("Delete")]
+        // POST: CountryLanguage/Delete/BEL/<script>...
+        [HttpPost("CountryLanguage/Delete/{countryCode}/{*language}"), ActionName("Delete")]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> DeleteConfirmed(string countryCode, string language)
         {
+            countryCode = countryCode?.ToUpper() ?? string.Empty;
+
+            if (string.IsNullOrEmpty(countryCode) || string.IsNullOrEmpty(language))
+            {
+                return NotFound();
+            }
+
             var countryLanguage = await _countryLanguageRepository.GetByKeyAsync(countryCode, language);
 
             if (countryLanguage != null)
             {
                 await _countryLanguageRepository.DeleteAsync(countryLanguage);
+                _logger.LogInformation("Registro XSS almacenado {Code}/{Lang} eliminado con éxito.", countryCode, language);
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        // GET: CountryLanguage/FuerzaBrutaDelete?countryCode=BEL&language=<script>...
+        [HttpGet("CountryLanguage/FuerzaBrutaDelete")]
+        [Authorize(Roles = "Administrador")]
+        public async Task<IActionResult> FuerzaBrutaDelete(string countryCode, string language)
+        {
+            if (string.IsNullOrEmpty(countryCode) || string.IsNullOrEmpty(language))
+            {
+                return BadRequest("Faltan parámetros.");
+            }
+
+            var countryLanguage = await _countryLanguageRepository.GetByKeyAsync(countryCode, language);
+
+            if (countryLanguage != null)
+            {
+                await _countryLanguageRepository.DeleteAsync(countryLanguage);
+                _logger.LogInformation("Registro XSS eliminado mediante QueryString.");
             }
 
             return RedirectToAction(nameof(Index));

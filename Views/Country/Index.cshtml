@@ -3,8 +3,10 @@
 @{
     ViewData["Title"] = "Países";
 
-    string TraducirContinente(string continent)
+    string TraducirContinente(string? continent)
     {
+        if (string.IsNullOrEmpty(continent)) return "";
+
         return continent switch
         {
             "Asia" => "Asia",
@@ -45,58 +47,61 @@
             </tr>
         </thead>
         <tbody>
-            @if (!Model.Any())
+            @if (Model == null || !Model.Any())
             {
                 <tr>
                     <td colspan="7" style="text-align: center; color: var(--ink-secondary); padding: 2.5rem; font-style: italic;">No hay datos que mostrar.</td>
                 </tr>
             }
-            @foreach (var item in Model)
+            else
             {
-                <tr>
-                    <td>
-                        @{
-                            var rowFlagUrl = Url.Content("~/images/default-flag.png");
-                            if (!string.IsNullOrEmpty(item.BanderaPath))
-                            {
-                                var tempPath = item.BanderaPath.StartsWith("wwwroot") 
-                                    ? item.BanderaPath.Substring("wwwroot".Length) 
-                                    : item.BanderaPath;
-                                tempPath = tempPath.Replace("\\", "/");
-                                if (!tempPath.Contains("/"))
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @{
+                                var rowFlagUrl = Url.Content("~/images/default-flag.png");
+                                if (!string.IsNullOrEmpty(item.BanderaPath))
                                 {
-                                    tempPath = "/uploads/banderas/" + tempPath;
+                                    var tempPath = item.BanderaPath.StartsWith("wwwroot")
+                                        ? item.BanderaPath.Substring("wwwroot".Length)
+                                        : item.BanderaPath;
+                                    tempPath = tempPath.Replace("\\", "/");
+                                    if (!tempPath.Contains("/"))
+                                    {
+                                        tempPath = "/uploads/banderas/" + tempPath;
+                                    }
+                                    if (!tempPath.StartsWith("/"))
+                                    {
+                                        tempPath = "/" + tempPath;
+                                    }
+                                    rowFlagUrl = tempPath;
                                 }
-                                if (!tempPath.StartsWith("/"))
-                                {
-                                    tempPath = "/" + tempPath;
-                                }
-                                rowFlagUrl = tempPath;
                             }
-                        }
-                        <div style="border: 1px solid var(--border-color); border-radius: 4px; width: 36px; height: 24px; display: flex; align-items: center; justify-content: center; overflow: hidden; background: var(--bg-primary);">
-                            <img src="@rowFlagUrl" alt="" style="max-width: 100%; max-height: 100%; object-fit: contain;" />
-                        </div>
-                    </td>
-                    <td><strong>@item.Code</strong></td>
-                    <td>@item.Name</td>
-                    <td>@TraducirContinente(item.Continent)</td>
-                    <td>@item.Region</td>
-                    <td>@item.Population.ToString("N0")</td>
-                    <td>
-                        <a asp-action="Details" asp-route-id="@item.Code" class="table-link-manage">Ver</a>
-                        @if (User.IsInRole("Editor") || User.IsInRole("Administrador"))
-                        {
-                            <span style="color: var(--border-color); margin: 0 4px;">|</span>
-                            <a asp-action="Edit" asp-route-id="@item.Code" class="table-link-manage">Editar</a>
-                        }
-                        @if (User.IsInRole("Administrador"))
-                        {
-                            <span style="color: var(--border-color); margin: 0 4px;">|</span>
-                            <a asp-action="Delete" asp-route-id="@item.Code" class="table-link-drop">Drop</a>
-                        }
-                    </td>
-                </tr>
+                            <div style="border: 1px solid var(--border-color); border-radius: 4px; width: 36px; height: 24px; display: flex; align-items: center; justify-content: center; overflow: hidden; background: var(--bg-primary);">
+                                <img src="@rowFlagUrl" alt="Bandera" style="max-width: 100%; max-height: 100%; object-fit: contain;" />
+                            </div>
+                        </td>
+                        <td><strong>@item.Code</strong></td>
+                        <td>@item.Name</td>
+                        <td>@TraducirContinente(item.Continent)</td>
+                        <td>@item.Region</td>
+                        <td>@item.Population.ToString("N0")</td>
+                        <td>
+                            <a asp-action="Details" asp-route-id="@item.Code" class="table-link-manage">Ver</a>
+                            @if (User.IsInRole("Editor") || User.IsInRole("Administrador"))
+                            {
+                                <span style="color: var(--border-color); margin: 0 4px;">|</span>
+                                <a asp-action="Edit" asp-route-id="@item.Code" class="table-link-manage">Editar</a>
+                            }
+                            @if (User.IsInRole("Administrador"))
+                            {
+                                <span style="color: var(--border-color); margin: 0 4px;">|</span>
+                                <a asp-action="Delete" asp-route-id="@item.Code" class="table-link-drop">Drop</a>
+                            }
+                        </td>
+                    </tr>
+                }
             }
         </tbody>
     </table>

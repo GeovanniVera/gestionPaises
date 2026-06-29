@@ -168,23 +168,26 @@ namespace gestionpaises.Controllers
         }
 
         // POST: Country/Edit/MEX
+        // POST: Country/Edit/MEX
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Editor,Administrador")]
         public async Task<IActionResult> Edit(string id, Country country, IFormFile? bandera)
         {
-            if (id != country.Code)
-            {
-                return NotFound();
-            }
-
-            // Convertir códigos a mayúsculas y re-validar
+            // Forzamos el ID de la URL en la entidad
             country.Code = id;
-            country.Code2 = country.Code2?.ToUpper() ?? string.Empty;
+
+            // 1. Eliminamos errores previos del ModelState provocados por el bindeo del input deshabilitado
             ModelState.Remove("Code");
             ModelState.Remove("Code2");
+
+            // Normalizamos el string
+            country.Code2 = country.Code2?.ToUpper() ?? string.Empty;
+
+            // 2. Re-validamos limpiamente el objeto completo
             TryValidateModel(country);
 
+            // 3. Procesamos validación de imagen si se adjuntó una nueva
             if (bandera != null)
             {
                 var (esValido, mensajeError) = _imageValidationService.ValidarImagen(bandera);
@@ -195,12 +198,14 @@ namespace gestionpaises.Controllers
                 }
             }
 
+            // 4. Si el ModelState pasó la prueba sin los errores de bindeo arrastrados
             if (ModelState.IsValid)
             {
                 try
                 {
                     if (bandera != null)
                     {
+                        _logger.LogInformation("Guardando nueva bandera en disco...");
                         var carpetaUploads = Path.Combine(_webHostEnvironment.WebRootPath, "uploads", "banderas");
                         Directory.CreateDirectory(carpetaUploads);
 
@@ -209,12 +214,16 @@ namespace gestionpaises.Controllers
                     }
                     else
                     {
-                        // Si no se sube una nueva imagen, conservamos la que ya existía en la base.
+                        // Recuperamos el registro actual para no perder la bandera que ya tenía guardada
                         var paisExistente = await _countryRepository.GetByCodeAsync(id);
                         country.BanderaPath = paisExistente?.BanderaPath;
                     }
 
+                    // Persistencia limpia usando tu repositorio
                     await _countryRepository.UpdateAsync(country);
+                    _logger.LogInformation("País {Codigo} guardado exitosamente vía Repositorio.", id);
+
+                    return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -224,8 +233,10 @@ namespace gestionpaises.Controllers
                     }
                     throw;
                 }
-                return RedirectToAction(nameof(Index));
             }
+
+            // 5. En caso de fallar alguna validación del negocio, reconstruimos la vista sin romperla
+            _logger.LogWarning("ModelState inválido detectado para {Codigo}. Volviendo a procesar vista.", id);
 
             var countryWithCitiesForEdit = await _countryRepository.GetCountryDetailsAsync(id);
             var citiesForEdit = countryWithCitiesForEdit?.Cities?.OrderBy(c => c.Name).ToList() ?? new List<City>();
@@ -235,6 +246,7 @@ namespace gestionpaises.Controllers
                 "ID",
                 "Name",
                 country.Capital);
+
             return View(country);
         }
 

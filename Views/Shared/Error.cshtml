@@ -1,25 +1,32 @@
 ﻿@model ErrorViewModel
 @{
-    ViewData["Title"] = "Error";
+    ViewData["Title"] = "Error del Sistema";
 }
 
-<h1 class="text-danger">Error.</h1>
-<h2 class="text-danger">An error occurred while processing your request.</h2>
+<div class="card" style="padding: 3rem; max-width: 600px; margin: 4rem auto; text-align: center; box-shadow: 0 10px 25px rgba(20, 33, 61, 0.05); border: 1px solid var(--border-color); border-radius: var(--border-radius-md);">
 
-@if (Model.ShowRequestId)
-{
-    <p>
-        <strong>Request ID:</strong> <code>@Model.RequestId</code>
+    <div style="font-size: 4rem; color: #dc3545; margin-bottom: 1rem;">
+        <i class="bi bi-exclamation-triangle-fill"></i> 
+    </div>
+
+    <h2 style="font-family: var(--font-display); font-weight: 700; color: var(--ink-primary); margin-bottom: 1rem;">
+        ¡Ups! Algo salió mal
+    </h2>
+
+    <p style="color: var(--ink-secondary); font-size: 1.1rem; line-height: 1.6; margin-bottom: 2rem;">
+        Lo sentimos, ocurrió un error inesperado en el servidor al procesar tu solicitud. El equipo técnico ha sido notificado.
     </p>
-}
 
-<h3>Development Mode</h3>
-<p>
-    Swapping to <strong>Development</strong> environment will display more detailed information about the error that occurred.
-</p>
-<p>
-    <strong>The Development environment shouldn't be enabled for deployed applications.</strong>
-    It can result in displaying sensitive information from exceptions to end users.
-    For local debugging, enable the <strong>Development</strong> environment by setting the <strong>ASPNETCORE_ENVIRONMENT</strong> environment variable to <strong>Development</strong>
-    and restarting the app.
-</p>
+    @if (Model?.ShowRequestId == true)
+    {
+        <div style="background-color: #f8f9fa; padding: 0.75rem; border-radius: 4px; border: 1px solid #e9ecef; margin-bottom: 2rem; font-family: monospace; font-size: 0.9rem; color: #6c757d;">
+            <strong>ID de la solicitud:</strong> <code>@Model.RequestId</code>
+        </div>
+    }
+
+    <div>
+        <a asp-controller="Home" asp-action="Index" class="btn btn-primary" style="padding: 10px 24px; font-weight: 600; background-color: var(--accent-primary); border-radius: var(--border-radius-md); text-decoration: none; color: #fff;">
+            Volver al Inicio
+        </a>
+    </div>
+</div>

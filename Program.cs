@@ -2,6 +2,7 @@ using Rotativa.AspNetCore;
 using gestionpaises.Data;
 using gestionpaises.Models;
 using gestionpaises.Services;
+using gestionpaises.Handlers; // <--- Asegúrate de que el namespace coincida con tu clase handler
 using gestionpaises.Repositories.Interfaces;
 using gestionpaises.Repositories.Implementations;
 using Microsoft.AspNetCore.Authentication;
@@ -13,7 +14,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 // --- Conexión a MySQL ---
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
@@ -39,6 +39,10 @@ builder.Services.AddTransient<IEmailSender, SmtpEmailSender>();
 builder.Services.AddScoped<ICountryRepository, CountryRepository>();
 builder.Services.AddScoped<ICityRepository, CityRepository>();
 builder.Services.AddScoped<ICountryLanguageRepository, CountryLanguageRepository>();
+
+// --- Manejo Global de Excepciones ---
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>(); // <--- REGISTRO DEL HANDLER
+builder.Services.AddProblemDetails(); // <--- SOPORTE PARA DETALLES DE ERROR ESTÁNDAR
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -114,8 +118,14 @@ using (var scope = app.Services.CreateScope())
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
+    // En producción redirige a una página de error clásica si algo falla fuera del pipeline JSON
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
+}
+else
+{
+    // ACTIVA EL HANDLER GLOBAL EN DESARROLLO/PRODUCCIÓN PARA API O INTERCEPCIONES
+    app.UseExceptionHandler();
 }
 
 app.UseHttpsRedirection();
