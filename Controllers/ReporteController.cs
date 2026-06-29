@@ -1,8 +1,7 @@
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using gestionpaises.Data;
-using gestionpaises.Models;
+using gestionpaises.Repositories.Interfaces;
 using Rotativa.AspNetCore;
 
 namespace gestionpaises.Controllers
@@ -10,11 +9,11 @@ namespace gestionpaises.Controllers
     [Authorize(Roles = "Consulta,Editor,Administrador")]
     public class ReporteController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ICountryRepository _countryRepository;
 
-        public ReporteController(ApplicationDbContext context)
+        public ReporteController(ICountryRepository countryRepository)
         {
-            _context = context;
+            _countryRepository = countryRepository;
         }
 
         // Ruta sugerida por el profesor: /Reporte/Pais/MEX o por nombre /Reporte/Pais/Mexico
@@ -26,10 +25,8 @@ namespace gestionpaises.Controllers
                 return NotFound();
             }
 
-            var country = await _context.Countries
-                .Include(c => c.Cities)
-                .Include(c => c.CountryLanguages)
-                .FirstOrDefaultAsync(c => c.Code == id || c.Name == id);
+            var country = await _countryRepository.GetCountryReportByCodeAsync(id)
+                          ?? await _countryRepository.GetCountryReportByNameAsync(id);
 
             if (country == null)
             {
@@ -48,10 +45,8 @@ namespace gestionpaises.Controllers
                 return NotFound();
             }
 
-            var country = await _context.Countries
-                .Include(c => c.Cities)
-                .Include(c => c.CountryLanguages)
-                .FirstOrDefaultAsync(c => c.Code == id || c.Name == id);
+            var country = await _countryRepository.GetCountryReportByCodeAsync(id)
+                          ?? await _countryRepository.GetCountryReportByNameAsync(id);
 
             if (country == null)
             {
@@ -59,13 +54,15 @@ namespace gestionpaises.Controllers
             }
 
             // Rotativa renderizará la vista "Pais" del subdirectorio Reporte y la convertirá a PDF
-            return new ViewAsPdf("Pais", country)
+            var pdfResult = new ViewAsPdf("Pais", country)
             {
                 FileName = $"Reporte_{country.Code}.pdf",
                 PageSize = Rotativa.AspNetCore.Options.Size.Letter,
                 PageOrientation = Rotativa.AspNetCore.Options.Orientation.Portrait,
                 CustomSwitches = "--enable-local-file-access"
             };
+            pdfResult.ViewData["IsPdf"] = true;
+            return pdfResult;
         }
     }
 }

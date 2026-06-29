@@ -4,23 +4,24 @@
     ViewData["Title"] = "Reportes";
     var countriesList = ViewBag.CountriesList as List<gestionpaises.Models.Country>;
     
-    var flagUrl = "";
+    var flagUrl = Url.Content("~/images/default-flag.png");
     if (Model != null)
     {
         if (!string.IsNullOrEmpty(Model.BanderaPath))
         {
-            flagUrl = Model.BanderaPath.StartsWith("wwwroot") 
+            var tempPath = Model.BanderaPath.StartsWith("wwwroot") 
                 ? Model.BanderaPath.Substring("wwwroot".Length) 
                 : Model.BanderaPath;
-            flagUrl = flagUrl.Replace("\\", "/");
-            if (!flagUrl.Contains("/") && !flagUrl.Contains("\\"))
+            tempPath = tempPath.Replace("\\", "/");
+            if (!tempPath.Contains("/") && !tempPath.Contains("\\"))
             {
-                flagUrl = "/uploads/banderas/" + flagUrl;
+                tempPath = "/uploads/banderas/" + tempPath;
             }
-            if (!flagUrl.StartsWith("/"))
+            if (!tempPath.StartsWith("/"))
             {
-                flagUrl = "/" + flagUrl;
+                tempPath = "/" + tempPath;
             }
+            flagUrl = tempPath;
         }
     }
 }
@@ -57,14 +58,7 @@
           <div>
             <!-- Real Flag Image Card Container -->
             <div style="border: 1px solid var(--border-color); border-radius: var(--border-radius-md); padding: 4px; background: var(--bg-primary); width: 140px; height: 90px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
-                @if (!string.IsNullOrEmpty(flagUrl))
-                {
-                    <img src="@flagUrl" alt="Bandera de @Model.Name" style="max-width: 100%; max-height: 100%; object-fit: contain;" onerror="handleFlagError(this, 'md');" />
-                }
-                else
-                {
-                    <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='90' viewBox='0 0 140 90'><rect width='100%' height='100%' fill='%23edeae4'/><text x='50%' y='55%' font-family='sans-serif' font-size='16' fill='%238d8a80' text-anchor='middle' dominant-baseline='middle'>N/D</text></svg>" alt="" style="max-width: 100%; max-height: 100%; object-fit: contain;" />
-                }
+                <img src="@flagUrl" alt="Bandera de @Model.Name" style="max-width: 100%; max-height: 100%; object-fit: contain;" />
             </div>
           </div>
         </div>

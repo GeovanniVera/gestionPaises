@@ -1,37 +1,53 @@
-﻿@model gestionpaises.Models.CountryLanguage
+@model gestionpaises.Models.CountryLanguage
 
 @{
     ViewData["Title"] = "Editar idioma";
 }
 
-<h1>Editar idioma</h1>
+<div class="dashboard-header" style="margin-bottom: 2rem; max-width: 600px; margin: 0 auto 2rem auto;">
+    <h2>Editar Idioma</h2>
+</div>
 
-<form asp-action="Edit" method="post">
-    <input type="hidden" asp-for="CountryCode" />
-    <input type="hidden" asp-for="Language" />
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<div class="card" style="padding: 2.5rem; max-width: 600px; margin: 0 auto; box-shadow: 0 10px 25px rgba(20, 33, 61, 0.05); border: 1px solid var(--border-color);">
+    <form asp-action="Edit" method="post">
+        <input type="hidden" asp-for="CountryCode" />
+        <input type="hidden" asp-for="Language" />
+        <div asp-validation-summary="ModelOnly" class="text-danger" style="margin-bottom: 1.5rem;"></div>
 
-    <div class="form-group mb-3">
-        <label class="form-label">País</label>
-        <input value="@Model.Country?.Name" class="form-control" disabled />
-    </div>
+        <div class="form-grid" style="display: grid; grid-template-columns: repeat(12, 1fr); gap: 1.25rem;">
+            
+            <div style="grid-column: span 12;">
+                <label class="form-label" style="font-weight: 500; font-size: 13px; color: var(--ink-secondary); display: block; margin-bottom: 6px;">País</label>
+                <input value="@Model.Country?.Name" class="form-control" disabled style="width: 100%; cursor: not-allowed; background-color: var(--bg-tertiary);" />
+            </div>
 
-    <div class="form-group mb-3">
-        <label class="form-label">Idioma</label>
-        <input value="@Model.Language" class="form-control" disabled />
-    </div>
+            <div style="grid-column: span 12;">
+                <label class="form-label" style="font-weight: 500; font-size: 13px; color: var(--ink-secondary); display: block; margin-bottom: 6px;">Idioma</label>
+                <input value="@Model.Language" class="form-control" disabled style="width: 100%; cursor: not-allowed; background-color: var(--bg-tertiary);" />
+            </div>
 
-    <div class="form-check mb-3">
-        <input asp-for="IsOfficial" class="form-check-input" />
-        <label asp-for="IsOfficial" class="form-check-label">Es idioma oficial</label>
-    </div>
+            <div style="grid-column: span 6; display: flex; align-items: center; margin-top: 1rem;">
+                <div class="form-check" style="display: flex; align-items: center; gap: 8px;">
+                    <input asp-for="IsOfficial" class="form-check-input" style="width: 18px; height: 18px; cursor: pointer; accent-color: var(--accent-primary);" />
+                    <label asp-for="IsOfficial" class="form-check-label" style="font-weight: 500; font-size: 14px; cursor: pointer; color: var(--ink-primary);">Es idioma oficial</label>
+                </div>
+            </div>
 
-    <div class="form-group mb-3">
-        <label asp-for="Percentage" class="form-label">Porcentaje de hablantes</label>
-        <input asp-for="Percentage" class="form-control" />
-        <span asp-validation-for="Percentage" class="text-danger"></span>
-    </div>
+            <div style="grid-column: span 6;">
+                <label asp-for="Percentage" class="form-label" style="font-weight: 500; font-size: 13px; color: var(--ink-secondary); display: block; margin-bottom: 6px;">Porcentaje de hablantes (%)</label>
+                <input asp-for="Percentage" class="form-control" type="number" step="0.1" style="width: 100%;" />
+                <span asp-validation-for="Percentage" class="text-danger" style="font-size: 12px;"></span>
+            </div>
 
-    <button type="submit" class="btn btn-primary">Guardar cambios</button>
-    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
-</form>
+        </div>
+
+        <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 2.5rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem;">
+            <a asp-action="Index" class="btn btn-secondary" style="padding: 10px 24px; border-radius: var(--border-radius-md);">Cancelar</a>
+            <button type="submit" class="btn btn-primary" style="padding: 10px 32px; border-radius: var(--border-radius-md); background-color: var(--accent-primary); color: #fff; font-weight: 600;">Guardar cambios</button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

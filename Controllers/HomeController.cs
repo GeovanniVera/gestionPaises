@@ -1,41 +1,46 @@
 using System.Diagnostics;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using gestionpaises.Data;
 using gestionpaises.Models;
-using Microsoft.AspNetCore.Authorization;
-using Rotativa.AspNetCore;
+using gestionpaises.Repositories.Interfaces;
 
 namespace gestionpaises.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ICountryRepository _countryRepository;
+        private readonly ICityRepository _cityRepository;
+        private readonly ICountryLanguageRepository _countryLanguageRepository;
 
-        public HomeController(ApplicationDbContext context)
+        public HomeController(
+            ICountryRepository countryRepository,
+            ICityRepository cityRepository,
+            ICountryLanguageRepository countryLanguageRepository)
         {
-            _context = context;
+            _countryRepository = countryRepository;
+            _cityRepository = cityRepository;
+            _countryLanguageRepository = countryLanguageRepository;
         }
 
         public async Task<IActionResult> Index()
         {
-            ViewBag.TotalCountries = await _context.Countries.CountAsync();
-            ViewBag.TotalCities = await _context.Cities.CountAsync();
-            ViewBag.TotalLanguages = await _context.CountryLanguages.CountAsync();
+            ViewBag.TotalCountries = (await _countryRepository.GetAllAsync()).Count();
+            ViewBag.TotalCities = (await _cityRepository.GetAllAsync()).Count();
+            ViewBag.TotalLanguages = (await _countryLanguageRepository.GetAllAsync()).Count();
             return View();
         }
 
         public async Task<IActionResult> Reports(string id = "MEX")
         {
-            var country = await _context.Countries
-                .FirstOrDefaultAsync(c => c.Code == id);
+            var country = await _countryRepository.GetByCodeAsync(id);
 
             if (country == null)
             {
-                country = await _context.Countries.FirstOrDefaultAsync();
+                country = (await _countryRepository.GetAllAsync()).FirstOrDefault();
             }
 
-            ViewBag.CountriesList = await _context.Countries.OrderBy(c => c.Name).ToListAsync();
+            ViewBag.CountriesList = await _countryRepository.GetAllAsync();
             return View(country);
         }
 

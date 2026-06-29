@@ -1,20 +1,37 @@
-﻿@model gestionpaises.Models.City
+@model gestionpaises.Models.City
 
 @{
     ViewData["Title"] = "Detalle de ciudad";
 }
 
-<h1>@Model.Name</h1>
+<div class="dashboard-header" style="margin-bottom: 2rem; max-width: 600px; margin: 0 auto 2rem auto;">
+    <h2>Detalle de la Ciudad</h2>
+</div>
 
-<dl class="row">
-    <dt class="col-sm-3">País</dt>
-    <dd class="col-sm-9">@Model.Country.Name (@Model.CountryCode)</dd>
+<div class="card" style="padding: 2.5rem; max-width: 600px; margin: 0 auto 2rem auto; box-shadow: 0 10px 25px rgba(20, 33, 61, 0.05); border: 1px solid var(--border-color);">
+    <h1 style="font-size: 2rem; font-family: var(--font-display); font-weight: 700; color: var(--ink-primary); margin-top: 0; margin-bottom: 1.5rem; border-bottom: 2px solid var(--border-color); padding-bottom: 1rem;">@Model.Name</h1>
 
-    <dt class="col-sm-3">Distrito</dt>
-    <dd class="col-sm-9">@Model.District</dd>
+    <div class="form-grid" style="display: grid; grid-template-columns: repeat(12, 1fr); gap: 1.5rem; margin-bottom: 1rem;">
+        
+        <div style="grid-column: span 12;">
+            <span style="font-size: 11px; text-transform: uppercase; color: var(--ink-muted); display: block; margin-bottom: 4px; font-weight: 600;">País</span>
+            <strong style="font-size: 1.25rem; color: var(--ink-primary);">@Model.Country.Name (@Model.CountryCode)</strong>
+        </div>
 
-    <dt class="col-sm-3">Población</dt>
-    <dd class="col-sm-9">@Model.Population.ToString("N0")</dd>
-</dl>
+        <div style="grid-column: span 6;">
+            <span style="font-size: 11px; text-transform: uppercase; color: var(--ink-muted); display: block; margin-bottom: 4px; font-weight: 600;">Distrito / Estado</span>
+            <strong style="font-size: 1.15rem; color: var(--ink-primary);">@Model.District</strong>
+        </div>
 
-<a asp-action="Index" class="btn btn-secondary">Volver al listado</a>
+        <div style="grid-column: span 6;">
+            <span style="font-size: 11px; text-transform: uppercase; color: var(--ink-muted); display: block; margin-bottom: 4px; font-weight: 600;">Población</span>
+            <strong style="font-size: 1.15rem; color: var(--ink-primary);">@Model.Population.ToString("N0") hab.</strong>
+        </div>
+
+    </div>
+</div>
+
+<div style="display: flex; justify-content: flex-end; max-width: 600px; margin: 0 auto; gap: 1rem;">
+    <a asp-action="Index" class="btn btn-secondary" style="padding: 10px 24px; border-radius: var(--border-radius-md);">Volver al listado</a>
+    <a asp-action="Edit" asp-route-id="@Model.ID" class="btn btn-primary" style="padding: 10px 32px; border-radius: var(--border-radius-md); background-color: var(--accent-primary); color: #fff; font-weight: 600;">Editar Ciudad</a>
+</div>

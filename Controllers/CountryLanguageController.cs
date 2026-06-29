@@ -1,33 +1,39 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using gestionpaises.Data;
 using gestionpaises.Models;
+using gestionpaises.Repositories.Interfaces;
 
 namespace gestionpaises.Controllers
 {
     [Authorize]
     public class CountryLanguageController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ICountryLanguageRepository _countryLanguageRepository;
+        private readonly ICountryRepository _countryRepository;
 
-        public CountryLanguageController(ApplicationDbContext context)
+        public CountryLanguageController(
+            ICountryLanguageRepository countryLanguageRepository,
+            ICountryRepository countryRepository)
         {
-            _context = context;
+            _countryLanguageRepository = countryLanguageRepository;
+            _countryRepository = countryRepository;
         }
 
         // GET: CountryLanguage
         [Authorize(Roles = "Consulta,Editor,Administrador")]
         public async Task<IActionResult> Index()
         {
-            var languages = await _context.CountryLanguages
-                .Include(cl => cl.Country)
-                .OrderBy(cl => cl.Country.Name)
+            var languages = await _countryLanguageRepository.GetAllAsync();
+            var sortedLanguages = languages
+                .OrderBy(cl => cl.Country?.Name ?? "")
                 .ThenBy(cl => cl.Language)
-                .ToListAsync();
+                .ToList();
 
-            return View(languages);
+            return View(sortedLanguages);
         }
 
         // GET: CountryLanguage/Details/MEX/Spanish
@@ -39,9 +45,7 @@ namespace gestionpaises.Controllers
                 return NotFound();
             }
 
-            var countryLanguage = await _context.CountryLanguages
-                .Include(cl => cl.Country)
-                .FirstOrDefaultAsync(cl => cl.CountryCode == countryCode && cl.Language == language);
+            var countryLanguage = await _countryLanguageRepository.GetByKeyAsync(countryCode, language);
 
             if (countryLanguage == null)
             {
@@ -53,35 +57,40 @@ namespace gestionpaises.Controllers
 
         // GET: CountryLanguage/Create
         [Authorize(Roles = "Editor,Administrador")]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewBag.Countries = new SelectList(_context.Countries.OrderBy(c => c.Name), "Code", "Name");
+            var countries = await _countryRepository.GetAllAsync();
+            ViewBag.Countries = new SelectList(countries, "Code", "Name");
             return View();
         }
 
-        // POST: CountryLanguage/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Editor,Administrador")]
         public async Task<IActionResult> Create(CountryLanguage countryLanguage)
         {
-            bool yaExiste = await _context.CountryLanguages.AnyAsync(cl =>
-                cl.CountryCode == countryLanguage.CountryCode &&
-                cl.Language == countryLanguage.Language);
+            // Convertir código a mayúsculas y re-validar
+            countryLanguage.CountryCode = countryLanguage.CountryCode?.ToUpper() ?? string.Empty;
+            ModelState.Remove("CountryCode");
+            TryValidateModel(countryLanguage);
+
+            bool yaExiste = await _countryLanguageRepository.ExistsAsync(
+                countryLanguage.CountryCode,
+                countryLanguage.Language);
 
             if (yaExiste)
             {
-                ModelState.AddModelError(string.Empty, "Ese idioma ya está registrado para este país.");
+                ModelState.AddModelError("Language", "Este idioma ya está registrado para este país.");
             }
 
             if (ModelState.IsValid)
             {
-                _context.CountryLanguages.Add(countryLanguage);
-                await _context.SaveChangesAsync();
+                await _countryLanguageRepository.AddAsync(countryLanguage);
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewBag.Countries = new SelectList(_context.Countries.OrderBy(c => c.Name), "Code", "Name", countryLanguage.CountryCode);
+            var countries = await _countryRepository.GetAllAsync();
+            ViewBag.Countries = new SelectList(countries, "Code", "Name", countryLanguage.CountryCode);
             return View(countryLanguage);
         }
 
@@ -94,15 +103,15 @@ namespace gestionpaises.Controllers
                 return NotFound();
             }
 
-            var countryLanguage = await _context.CountryLanguages
-                .FirstOrDefaultAsync(cl => cl.CountryCode == countryCode && cl.Language == language);
+            var countryLanguage = await _countryLanguageRepository.GetByKeyAsync(countryCode, language);
 
             if (countryLanguage == null)
             {
                 return NotFound();
             }
 
-            ViewBag.Countries = new SelectList(_context.Countries.OrderBy(c => c.Name), "Code", "Name", countryLanguage.CountryCode);
+            var countries = await _countryRepository.GetAllAsync();
+            ViewBag.Countries = new SelectList(countries, "Code", "Name", countryLanguage.CountryCode);
             return View(countryLanguage);
         }
 
@@ -121,13 +130,11 @@ namespace gestionpaises.Controllers
             {
                 try
                 {
-                    _context.Update(countryLanguage);
-                    await _context.SaveChangesAsync();
+                    await _countryLanguageRepository.UpdateAsync(countryLanguage);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    bool existe = await _context.CountryLanguages.AnyAsync(cl =>
-                        cl.CountryCode == countryCode && cl.Language == language);
+                    bool existe = await _countryLanguageRepository.ExistsAsync(countryCode, language);
 
                     if (!existe)
                     {
@@ -138,7 +145,8 @@ namespace gestionpaises.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewBag.Countries = new SelectList(_context.Countries.OrderBy(c => c.Name), "Code", "Name", countryLanguage.CountryCode);
+            var countries = await _countryRepository.GetAllAsync();
+            ViewBag.Countries = new SelectList(countries, "Code", "Name", countryLanguage.CountryCode);
             return View(countryLanguage);
         }
 
@@ -151,9 +159,7 @@ namespace gestionpaises.Controllers
                 return NotFound();
             }
 
-            var countryLanguage = await _context.CountryLanguages
-                .Include(cl => cl.Country)
-                .FirstOrDefaultAsync(cl => cl.CountryCode == countryCode && cl.Language == language);
+            var countryLanguage = await _countryLanguageRepository.GetByKeyAsync(countryCode, language);
 
             if (countryLanguage == null)
             {
@@ -169,13 +175,11 @@ namespace gestionpaises.Controllers
         [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> DeleteConfirmed(string countryCode, string language)
         {
-            var countryLanguage = await _context.CountryLanguages
-                .FirstOrDefaultAsync(cl => cl.CountryCode == countryCode && cl.Language == language);
+            var countryLanguage = await _countryLanguageRepository.GetByKeyAsync(countryCode, language);
 
             if (countryLanguage != null)
             {
-                _context.CountryLanguages.Remove(countryLanguage);
-                await _context.SaveChangesAsync();
+                await _countryLanguageRepository.DeleteAsync(countryLanguage);
             }
 
             return RedirectToAction(nameof(Index));

@@ -4,37 +4,51 @@
     ViewData["Title"] = "Crear ciudad";
 }
 
-<h1>Crear ciudad</h1>
+<div class="dashboard-header" style="margin-bottom: 2rem; max-width: 600px; margin: 0 auto 2rem auto;">
+    <h2>Crear Nueva Ciudad</h2>
+</div>
 
-<form asp-action="Create" method="post">
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<div class="card" style="padding: 2.5rem; max-width: 600px; margin: 0 auto; box-shadow: 0 10px 25px rgba(20, 33, 61, 0.05); border: 1px solid var(--border-color);">
+    <form asp-action="Create" method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger" style="margin-bottom: 1.5rem;"></div>
 
-    <div class="form-group mb-3">
-        <label asp-for="Name" class="form-label">Nombre de la Ciudad</label>
-        <input asp-for="Name" class="form-control" />
-        <span asp-validation-for="Name" class="text-danger"></span>
-    </div>
+        <div class="form-grid" style="display: grid; grid-template-columns: repeat(12, 1fr); gap: 1.25rem;">
+            
+            <div style="grid-column: span 12;">
+                <label asp-for="Name" class="form-label" style="font-weight: 500; font-size: 13px; color: var(--ink-secondary); display: block; margin-bottom: 6px;">Nombre de la Ciudad</label>
+                <input asp-for="Name" class="form-control" placeholder="Ej. Ciudad de México" style="width: 100%;" />
+                <span asp-validation-for="Name" class="text-danger" style="font-size: 12px;"></span>
+            </div>
 
-    <div class="form-group mb-3">
-        <label asp-for="CountryCode" class="form-label">País</label>
-        <select asp-for="CountryCode" class="form-select" asp-items="ViewBag.Countries">
-            <option value="">-- Selecciona un país --</option>
-        </select>
-        <span asp-validation-for="CountryCode" class="text-danger"></span>
-    </div>
+            <div style="grid-column: span 12;">
+                <label asp-for="CountryCode" class="form-label" style="font-weight: 500; font-size: 13px; color: var(--ink-secondary); display: block; margin-bottom: 6px;">País</label>
+                <select asp-for="CountryCode" class="form-select" asp-items="ViewBag.Countries" style="width: 100%; padding: 12px 16px; border-radius: var(--border-radius-md); border: 1px solid var(--border-color); background-color: var(--bg-secondary); color: var(--ink-primary);">
+                    <option value="">-- Selecciona un país --</option>
+                </select>
+                <span asp-validation-for="CountryCode" class="text-danger" style="font-size: 12px;"></span>
+            </div>
 
-    <div class="form-group mb-3">
-        <label asp-for="District" class="form-label">Distrito</label>
-        <input asp-for="District" class="form-control" />
-        <span asp-validation-for="District" class="text-danger"></span>
-    </div>
+            <div style="grid-column: span 6;">
+                <label asp-for="District" class="form-label" style="font-weight: 500; font-size: 13px; color: var(--ink-secondary); display: block; margin-bottom: 6px;">Distrito / Estado</label>
+                <input asp-for="District" class="form-control" placeholder="Ej. Distrito Federal" style="width: 100%;" />
+                <span asp-validation-for="District" class="text-danger" style="font-size: 12px;"></span>
+            </div>
 
-    <div class="form-group mb-3">
-        <label asp-for="Population" class="form-label">Población</label>
-        <input asp-for="Population" class="form-control" type="number" />
-        <span asp-validation-for="Population" class="text-danger"></span>
-    </div>
+            <div style="grid-column: span 6;">
+                <label asp-for="Population" class="form-label" style="font-weight: 500; font-size: 13px; color: var(--ink-secondary); display: block; margin-bottom: 6px;">Población</label>
+                <input asp-for="Population" class="form-control" type="number" placeholder="Ej. 8500000" style="width: 100%;" />
+                <span asp-validation-for="Population" class="text-danger" style="font-size: 12px;"></span>
+            </div>
 
-    <button type="submit" class="btn btn-primary">Guardar</button>
-    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
-</form>
+        </div>
+
+        <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 2.5rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem;">
+            <a asp-action="Index" class="btn btn-secondary" style="padding: 10px 24px; border-radius: var(--border-radius-md);">Cancelar</a>
+            <button type="submit" class="btn btn-primary" style="padding: 10px 32px; border-radius: var(--border-radius-md); background-color: var(--accent-primary); color: #fff; font-weight: 600;">Guardar</button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

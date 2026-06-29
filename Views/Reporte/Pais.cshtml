@@ -4,13 +4,14 @@
 @{
     Layout = null; // Desactivamos el layout general para tener el reporte totalmente limpio
 
-    // Detectamos si la petición actual viene del motor PDF de Rotativa (wkhtmltopdf)
-    bool isPdf = Context.Request.Headers["User-Agent"].ToString().Contains("wkhtmltopdf", StringComparison.OrdinalIgnoreCase);
+    // Detectamos si la petición actual se está renderizando para el motor de PDF
+    bool isPdf = (ViewData["IsPdf"] as bool?) ?? false;
 
     var flagSrc = "";
+    var relativeUrl = "/images/default-flag.png";
     if (Model != null && !string.IsNullOrEmpty(Model.BanderaPath))
     {
-        var relativeUrl = Model.BanderaPath.StartsWith("wwwroot") 
+        relativeUrl = Model.BanderaPath.StartsWith("wwwroot") 
             ? Model.BanderaPath.Substring("wwwroot".Length) 
             : Model.BanderaPath;
         relativeUrl = relativeUrl.Replace("\\", "/");
@@ -22,19 +23,21 @@
         {
             relativeUrl = "/" + relativeUrl;
         }
-
-        if (isPdf)
-        {
-            // Para el PDF usamos la ruta física local con el prefijo file:///
-            var absoluteFlagPath = System.IO.Path.Combine(WebHostEnvironment.WebRootPath, relativeUrl.TrimStart('/'));
-            flagSrc = "file:///" + absoluteFlagPath.Replace("\\", "/");
-        }
-        else
-        {
-            // Para el navegador web normal usamos la ruta web relativa
-            flagSrc = relativeUrl;
-        }
     }
+
+    if (isPdf)
+    {
+        // Para el PDF usamos la ruta física local con el prefijo file:///
+        var absoluteFlagPath = System.IO.Path.Combine(WebHostEnvironment.WebRootPath, relativeUrl.TrimStart('/'));
+        flagSrc = "file:///" + absoluteFlagPath.Replace("\\", "/");
+    }
+    else
+    {
+        // Para el navegador web normal usamos la ruta web relativa
+        flagSrc = relativeUrl;
+    }
+
+    var capitalCityName = Model?.Cities?.FirstOrDefault(c => c.ID == Model.Capital)?.Name ?? "N/D";
 }
 
 <!DOCTYPE html>
@@ -48,17 +51,30 @@
         body {
             font-family: 'Inter', sans-serif;
             color: #14213d;
-            background-color: #ffffff;
+            background-color: @(isPdf ? "#ffffff" : "#f7f5f0");
             margin: 0;
-            padding: 30px;
+            padding: 0;
             font-size: 13px;
             line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Contenedor tipo "hoja de papel" */
+        .paper-sheet {
+            background-color: #ffffff;
+            box-shadow: @(isPdf ? "none" : "0 10px 30px rgba(20, 33, 61, 0.05), 0 1px 3px rgba(0,0,0,0.02)");
+            width: @(isPdf ? "100%" : "820px");
+            margin: @(isPdf ? "0" : "40px auto");
+            padding: @(isPdf ? "10px" : "50px");
+            border-radius: @(isPdf ? "0" : "8px");
+            border: @(isPdf ? "none" : "1px solid #e3ddd0");
+            box-sizing: border-box;
         }
 
         .header {
             border-bottom: 2px solid #b5562f;
-            padding-bottom: 20px;
-            margin-bottom: 25px;
+            padding-bottom: 18px;
+            margin-bottom: 24px;
             display: table;
             width: 100%;
         }
@@ -80,7 +96,8 @@
             font-size: 28px;
             font-weight: 700;
             color: #14213d;
-            margin: 0 0 5px 0;
+            margin: 0 0 4px 0;
+            letter-spacing: -0.01em;
         }
 
         .subtitle {
@@ -88,17 +105,20 @@
             font-weight: 600;
             font-size: 14px;
             margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
 
         .flag-box {
             border: 1px solid #e3ddd0;
-            border-radius: 4px;
+            border-radius: 6px;
             padding: 4px;
             background: #f7f5f0;
             display: inline-block;
             width: 120px;
             height: 80px;
             text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
         }
 
         .flag-img {
@@ -110,23 +130,24 @@
         .grid {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 30px;
+            margin-bottom: 24px;
         }
 
         .grid td {
             width: 33.33%;
-            padding: 12px 15px;
+            padding: 12px 16px;
             vertical-align: top;
             border-bottom: 1px solid #e3ddd0;
         }
 
         .label {
-            font-size: 10px;
+            font-size: 9px;
             text-transform: uppercase;
             color: #8d8a80;
             display: block;
             margin-bottom: 4px;
-            font-weight: 600;
+            font-weight: 700;
+            letter-spacing: 0.05em;
         }
 
         .value {
@@ -137,34 +158,38 @@
 
         .full-width {
             border-top: 1px solid #e3ddd0;
-            padding-top: 15px;
-            margin-top: 15px;
+            padding-top: 12px;
+            margin-top: 12px;
         }
 
         .section-title {
             font-family: 'Space Grotesk', sans-serif;
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 600;
             color: #14213d;
             border-bottom: 1px solid #b5562f;
-            padding-bottom: 5px;
-            margin: 25px 0 15px 0;
+            padding-bottom: 6px;
+            margin: 28px 0 12px 0;
+            letter-spacing: -0.01em;
+            text-transform: uppercase;
         }
 
         .table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 25px;
+            margin-bottom: 24px;
         }
 
         .table th {
             background-color: #f7f5f0;
-            color: #3d4a6b;
-            font-weight: 600;
+            color: #14213d;
+            font-weight: 700;
             text-align: left;
             padding: 10px 12px;
             border-bottom: 2px solid #e3ddd0;
-            font-size: 12px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
         }
 
         .table td {
@@ -178,12 +203,13 @@
         }
 
         .badge {
-            display: inline-block;
+            display: inline-flex;
             padding: 2px 6px;
             border-radius: 4px;
-            font-size: 10px;
-            font-weight: 600;
+            font-size: 9px;
+            font-weight: 700;
             text-transform: uppercase;
+            letter-spacing: 0.03em;
         }
 
         .badge-success {
@@ -198,40 +224,61 @@
             border: 1px solid rgba(141, 138, 128, 0.18);
         }
 
-        .footer {
-            margin-top: 50px;
-            border-top: 1px solid #e3ddd0;
-            padding-top: 15px;
-            text-align: center;
-            font-size: 11px;
-            color: #8d8a80;
-        }
-
-        /* Estilos del botón de descarga para la versión web */
         .btn-download-container {
             margin-top: 30px;
             text-align: right;
+            display: @(isPdf ? "none !important" : "block");
         }
 
         .btn-pdf {
-            display: inline-block;
+            display: inline-flex;
             background-color: #b5562f;
             color: #ffffff;
-            padding: 10px 20px;
+            padding: 10px 24px;
             text-decoration: none;
             font-weight: 600;
             border-radius: 6px;
             font-size: 13px;
+            transition: all 0.15s ease;
+            box-shadow: 0 4px 10px rgba(181, 86, 47, 0.15);
             border: 1px solid transparent;
-            transition: background-color 0.15s ease;
         }
 
         .btn-pdf:hover {
             background-color: #8a3f1f;
         }
 
-        /* Oculta el botón cuando el navegador imprime o genera el PDF */
+        .btn-secondary-doc {
+            background-color: #3d4a6b;
+            box-shadow: 0 4px 10px rgba(61, 74, 107, 0.1);
+        }
+
+        .btn-secondary-doc:hover {
+            background-color: #14213d;
+        }
+
+        .footer {
+            margin-top: 48px;
+            border-top: 1px solid #e3ddd0;
+            padding-top: 16px;
+            text-align: center;
+            font-size: 11px;
+            color: #8d8a80;
+            line-height: 1.6;
+        }
+
+        /* Ajustes de impresión física / PDF */
         @@media print {
+            body {
+                background-color: #ffffff;
+            }
+            .paper-sheet {
+                box-shadow: none;
+                margin: 0;
+                padding: 10px;
+                width: 100%;
+                border: none;
+            }
             .btn-download-container {
                 display: none !important;
             }
@@ -240,139 +287,134 @@
 </head>
 <body>
 
-    <div class="header">
-        <div class="header-title-container">
-            <h1>@Model.Name</h1>
-            <p class="subtitle">Reporte de Estatus Territorial / Registro: @Model.Code</p>
-        </div>
-        <div class="header-flag-container">
-            <div class="flag-box">
-                @if (!string.IsNullOrEmpty(flagSrc))
-                {
-                    <img src="@flagSrc" alt="" class="flag-img" />
-                }
-                else
-                {
-                    <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='80' viewBox='0 0 120 80'><rect width='100%' height='100%' fill='%23edeae4'/><text x='50%' y='55%' font-family='sans-serif' font-size='12' fill='%238d8a80' text-anchor='middle' dominant-baseline='middle'>N/D</text></svg>" alt="" class="flag-img" />
-                }
+    <!-- Hoja de papel del reporte -->
+    <div class="paper-sheet">
+        <div class="header">
+            <div class="header-title-container">
+                <h1>@Model.Name</h1>
+                <p class="subtitle">Reporte de Estatus Territorial / Registro: @Model.Code</p>
+            </div>
+            <div class="header-flag-container">
+                <div class="flag-box">
+                    <img src="@flagSrc" alt="Bandera" class="flag-img" />
+                </div>
             </div>
         </div>
-    </div>
 
-    <table class="grid">
-        <tr>
-            <td>
-                <span class="label">Población</span>
-                <span class="value">@Model.Population.ToString("N0")</span>
-            </td>
-            <td>
-                <span class="label">Expectativa de Vida</span>
-                <span class="value">@(Model.LifeExpectancy.HasValue ? Model.LifeExpectancy.Value.ToString("F1") + " Años" : "N/D")</span>
-            </td>
-            <td>
-                <span class="label">Capital</span>
-                <span class="value">@(Model.Capital.HasValue ? Model.Capital.Value.ToString() : "N/D")</span>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <span class="label">Región Geográfica</span>
-                <span class="value">@Model.Region</span>
-            </td>
-            <td>
-                <span class="label">Superficie Territorial</span>
-                <span class="value">@Model.SurfaceArea.ToString("N2") km²</span>
-            </td>
-            <td>
-                <span class="label">Producto Nacional Bruto (GNP)</span>
-                <span class="value">@(Model.GNP.HasValue ? "$" + Model.GNP.Value.ToString("N2") + " USD" : "N/D")</span>
-            </td>
-        </tr>
-        <tr>
-            <td colspan="3" class="full-width">
-                <span class="label">Forma de Gobierno y Jefe de Estado</span>
-                <span class="value" style="font-size: 13px; font-weight: normal;">
-                    <strong>@Model.GovernmentForm</strong> - Jefatura de Estado: <em>@(Model.HeadOfState ?? "N/D")</em>
-                </span>
-            </td>
-        </tr>
-    </table>
-
-    <div class="section-title">Ciudades Registradas</div>
-    @if (Model.Cities != null && Model.Cities.Any())
-    {
-        <table class="table">
-            <thead>
-                <tr>
-                    <th style="width: 10%;">ID</th>
-                    <th style="width: 45%;">Nombre de la Ciudad</th>
-                    <th style="width: 25%;">Distrito</th>
-                    <th style="width: 20%; text-align: right;">Población</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var city in Model.Cities.OrderBy(c => c.Name))
-                {
-                    <tr>
-                        <td>@city.ID</td>
-                        <td><strong>@city.Name</strong></td>
-                        <td>@city.District</td>
-                        <td style="text-align: right;">@city.Population.ToString("N0")</td>
-                    </tr>
-                }
-            </tbody>
+        <table class="grid">
+            <tr>
+                <td>
+                    <span class="label">Población</span>
+                    <span class="value">@Model.Population.ToString("N0")</span>
+                </td>
+                <td>
+                    <span class="label">Expectativa de Vida</span>
+                    <span class="value">@(Model.LifeExpectancy.HasValue ? Model.LifeExpectancy.Value.ToString("F1") + " Años" : "N/D")</span>
+                </td>
+                <td>
+                    <span class="label">Capital</span>
+                    <span class="value">@capitalCityName</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span class="label">Región Geográfica</span>
+                    <span class="value">@Model.Region</span>
+                </td>
+                <td>
+                    <span class="label">Superficie Territorial</span>
+                    <span class="value">@Model.SurfaceArea.ToString("N2") km²</span>
+                </td>
+                <td>
+                    <span class="label">Producto Nacional Bruto (GNP)</span>
+                    <span class="value">@(Model.GNP.HasValue ? "$" + Model.GNP.Value.ToString("N2") + " USD" : "N/D")</span>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3" class="full-width">
+                    <span class="label">Forma de Gobierno y Jefe de Estado</span>
+                    <span class="value" style="font-size: 13px; font-weight: normal;">
+                        <strong>@Model.GovernmentForm</strong> - Jefatura de Estado: <em>@(Model.HeadOfState ?? "N/D")</em>
+                    </span>
+                </td>
+            </tr>
         </table>
-    }
-    else
-    {
-        <p style="color: #8d8a80; font-style: italic; margin-bottom: 25px;">No hay ciudades registradas para este país.</p>
-    }
 
-    <div class="section-title">Idiomas Oficiales y Demografía</div>
-    @if (Model.CountryLanguages != null && Model.CountryLanguages.Any())
-    {
-        <table class="table">
-            <thead>
-                <tr>
-                    <th style="width: 50%;">Idioma</th>
-                    <th style="width: 30%;">Estatus</th>
-                    <th style="width: 20%; text-align: right;">Porcentaje</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var lang in Model.CountryLanguages.OrderByDescending(l => l.Percentage))
-                {
+        <div class="section-title">Ciudades Registradas</div>
+        @if (Model.Cities != null && Model.Cities.Any())
+        {
+            <table class="table">
+                <thead>
                     <tr>
-                        <td><strong>@lang.Language</strong></td>
-                        <td>
-                            @if (lang.IsOfficial)
-                            {
-                                <span class="badge badge-success">Oficial</span>
-                            }
-                            else
-                            {
-                                <span class="badge badge-secondary">No Oficial</span>
-                            }
-                        </td>
-                        <td style="text-align: right;">@lang.Percentage.ToString("F1")%</td>
+                        <th style="width: 55%;">Nombre de la Ciudad</th>
+                        <th style="width: 25%;">Distrito</th>
+                        <th style="width: 20%; text-align: right;">Población</th>
                     </tr>
-                }
-            </tbody>
-        </table>
-    }
-    else
-    {
-        <p style="color: #8d8a80; font-style: italic;">No hay idiomas registrados para este país.</p>
-    }
+                </thead>
+                <tbody>
+                    @foreach (var city in Model.Cities.OrderBy(c => c.Name))
+                    {
+                        <tr>
+                            <td><strong>@city.Name</strong></td>
+                            <td>@city.District</td>
+                            <td style="text-align: right;">@city.Population.ToString("N0")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p style="color: #8d8a80; font-style: italic; margin-bottom: 25px;">No hay ciudades registradas para este país.</p>
+        }
 
-    <!-- Botón sugerido por el profesor: "Descargar PDF" que llame a una acción que retorne el archivo -->
-    <div class="btn-download-container">
-        <a href="/Reporte/DownloadPdf/@Model.Code" class="btn-pdf">Descargar PDF</a>
-    </div>
+        <div class="section-title">Idiomas Oficiales y Demografía</div>
+        @if (Model.CountryLanguages != null && Model.CountryLanguages.Any())
+        {
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th style="width: 50%;">Idioma</th>
+                        <th style="width: 30%;">Estatus</th>
+                        <th style="width: 20%; text-align: right;">Porcentaje</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var lang in Model.CountryLanguages.OrderByDescending(l => l.Percentage))
+                    {
+                        <tr>
+                            <td><strong>@lang.Language</strong></td>
+                            <td>
+                                @if (lang.IsOfficial)
+                                {
+                                    <span class="badge badge-success">Oficial</span>
+                                }
+                                else
+                                {
+                                    <span class="badge badge-secondary">No Oficial</span>
+                                }
+                            </td>
+                            <td style="text-align: right;">@lang.Percentage.ToString("F1")%</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p style="color: #8d8a80; font-style: italic;">No hay idiomas registrados para este país.</p>
+        }
 
-    <div class="footer">
-        <p>GestionPaises.co - Reporte generado de manera segura mediante encriptación de sesión y validación de firmas.</p>
-        <p>Fecha de Generación: @DateTime.Now.ToString("dd/MM/yyyy hh:mm tt")</p>
+        <!-- Botones de acción en el pie del documento (se ocultan en el PDF) -->
+        <div class="btn-download-container">
+            <a href="/Home/Reports/@Model.Code" class="btn-pdf btn-secondary-doc" style="margin-right: 8px;">Volver a Reportes</a>
+            <a href="/Reporte/DownloadPdf/@Model.Code" class="btn-pdf">Descargar PDF</a>
+        </div>
+
+        <div class="footer">
+            <p>GestionPaises.co - Reporte generado de manera segura mediante encriptación de sesión y validación de firmas.</p>
+            <p>Fecha de Generación: @DateTime.Now.ToString("dd/MM/yyyy hh:mm tt")</p>
+        </div>
     </div>
 
 </body>

@@ -20,7 +20,6 @@
     <table class="table">
         <thead>
             <tr>
-                <th>ID</th>
                 <th>Nombre</th>
                 <th>País</th>
                 <th>Distrito</th>
@@ -32,13 +31,12 @@
             @if (!Model.Any())
             {
                 <tr>
-                    <td colspan="6" style="text-align: center; color: var(--ink-secondary); padding: 2.5rem; font-style: italic;">No hay datos que mostrar.</td>
+                    <td colspan="5" style="text-align: center; color: var(--ink-secondary); padding: 2.5rem; font-style: italic;">No hay datos que mostrar.</td>
                 </tr>
             }
             @foreach (var item in Model)
             {
                 <tr>
-                    <td>@item.ID</td>
                     <td><strong>@item.Name</strong></td>
                     <td>@(item.Country != null ? item.Country.Name : item.CountryCode)</td>
                     <td>@item.District</td>

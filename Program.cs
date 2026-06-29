@@ -2,6 +2,8 @@ using Rotativa.AspNetCore;
 using gestionpaises.Data;
 using gestionpaises.Models;
 using gestionpaises.Services;
+using gestionpaises.Repositories.Interfaces;
+using gestionpaises.Repositories.Implementations;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
@@ -32,6 +34,11 @@ builder.Services.AddScoped<ImageValidationService>();
 
 // --- Envío de correo real vía SMTP (MailHog en desarrollo) ---
 builder.Services.AddTransient<IEmailSender, SmtpEmailSender>();
+
+// --- Capa de Repositorios para Acceso a Datos ---
+builder.Services.AddScoped<ICountryRepository, CountryRepository>();
+builder.Services.AddScoped<ICityRepository, CityRepository>();
+builder.Services.AddScoped<ICountryLanguageRepository, CountryLanguageRepository>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();

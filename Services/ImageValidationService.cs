@@ -1,18 +1,17 @@
-﻿namespace gestionpaises.Services
+namespace gestionpaises.Services
 {
     public class ImageValidationService
     {
         private const long TamañoMaximoBytes = 2 * 1024 * 1024; // 2 MB
 
-        private static readonly string[] ExtensionesPermitidas = { ".jpg", ".jpeg", ".png", ".gif" };
+        private static readonly string[] ExtensionesPermitidas = { ".jpg", ".jpeg", ".png" };
 
         // Firmas de bytes (magic numbers) reales de cada formato de imagen permitido.
         private static readonly Dictionary<string, List<byte[]>> Firmas = new()
         {
             { ".jpg",  new List<byte[]> { new byte[] { 0xFF, 0xD8, 0xFF } } },
             { ".jpeg", new List<byte[]> { new byte[] { 0xFF, 0xD8, 0xFF } } },
-            { ".png",  new List<byte[]> { new byte[] { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A } } },
-            { ".gif",  new List<byte[]> { new byte[] { 0x47, 0x49, 0x46, 0x38, 0x37, 0x61 }, new byte[] { 0x47, 0x49, 0x46, 0x38, 0x39, 0x61 } } }
+            { ".png",  new List<byte[]> { new byte[] { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A } } }
         };
 
         public (bool EsValido, string? MensajeError) ValidarImagen(IFormFile archivo)

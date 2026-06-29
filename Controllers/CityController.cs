@@ -1,32 +1,33 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using gestionpaises.Data;
 using gestionpaises.Models;
+using gestionpaises.Repositories.Interfaces;
 
 namespace gestionpaises.Controllers
 {
     [Authorize]
     public class CityController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ICityRepository _cityRepository;
+        private readonly ICountryRepository _countryRepository;
 
-        public CityController(ApplicationDbContext context)
+        public CityController(ICityRepository cityRepository, ICountryRepository countryRepository)
         {
-            _context = context;
+            _cityRepository = cityRepository;
+            _countryRepository = countryRepository;
         }
 
         // GET: City
         [Authorize(Roles = "Consulta,Editor,Administrador")]
         public async Task<IActionResult> Index()
         {
-            var cities = await _context.Cities
-                .Include(c => c.Country)
-                .OrderBy(c => c.Name)
-                .ToListAsync();
-
-            return View(cities);
+            var cities = await _cityRepository.GetAllAsync();
+            var sortedCities = cities.OrderBy(c => c.Name).ToList();
+            return View(sortedCities);
         }
 
         // GET: City/Details/5
@@ -38,9 +39,7 @@ namespace gestionpaises.Controllers
                 return NotFound();
             }
 
-            var city = await _context.Cities
-                .Include(c => c.Country)
-                .FirstOrDefaultAsync(c => c.ID == id);
+            var city = await _cityRepository.GetByIdAsync(id.Value);
 
             if (city == null)
             {
@@ -52,9 +51,10 @@ namespace gestionpaises.Controllers
 
         // GET: City/Create
         [Authorize(Roles = "Editor,Administrador")]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewBag.Countries = new SelectList(_context.Countries.OrderBy(c => c.Name), "Code", "Name");
+            var countries = await _countryRepository.GetAllAsync();
+            ViewBag.Countries = new SelectList(countries, "Code", "Name");
             return View();
         }
 
@@ -66,12 +66,12 @@ namespace gestionpaises.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Cities.Add(city);
-                await _context.SaveChangesAsync();
+                await _cityRepository.AddAsync(city);
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewBag.Countries = new SelectList(_context.Countries.OrderBy(c => c.Name), "Code", "Name", city.CountryCode);
+            var countries = await _countryRepository.GetAllAsync();
+            ViewBag.Countries = new SelectList(countries, "Code", "Name", city.CountryCode);
             return View(city);
         }
 
@@ -84,13 +84,14 @@ namespace gestionpaises.Controllers
                 return NotFound();
             }
 
-            var city = await _context.Cities.FindAsync(id);
+            var city = await _cityRepository.GetByIdAsync(id.Value);
             if (city == null)
             {
                 return NotFound();
             }
 
-            ViewBag.Countries = new SelectList(_context.Countries.OrderBy(c => c.Name), "Code", "Name", city.CountryCode);
+            var countries = await _countryRepository.GetAllAsync();
+            ViewBag.Countries = new SelectList(countries, "Code", "Name", city.CountryCode);
             return View(city);
         }
 
@@ -109,12 +110,11 @@ namespace gestionpaises.Controllers
             {
                 try
                 {
-                    _context.Update(city);
-                    await _context.SaveChangesAsync();
+                    await _cityRepository.UpdateAsync(city);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!await CityExists(city.ID))
+                    if (!await _cityRepository.ExistsAsync(city.ID))
                     {
                         return NotFound();
                     }
@@ -123,7 +123,8 @@ namespace gestionpaises.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewBag.Countries = new SelectList(_context.Countries.OrderBy(c => c.Name), "Code", "Name", city.CountryCode);
+            var countries = await _countryRepository.GetAllAsync();
+            ViewBag.Countries = new SelectList(countries, "Code", "Name", city.CountryCode);
             return View(city);
         }
 
@@ -136,9 +137,7 @@ namespace gestionpaises.Controllers
                 return NotFound();
             }
 
-            var city = await _context.Cities
-                .Include(c => c.Country)
-                .FirstOrDefaultAsync(c => c.ID == id);
+            var city = await _cityRepository.GetByIdAsync(id.Value);
 
             if (city == null)
             {
@@ -154,19 +153,13 @@ namespace gestionpaises.Controllers
         [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var city = await _context.Cities.FindAsync(id);
+            var city = await _cityRepository.GetByIdAsync(id);
             if (city != null)
             {
-                _context.Cities.Remove(city);
-                await _context.SaveChangesAsync();
+                await _cityRepository.DeleteAsync(city);
             }
 
             return RedirectToAction(nameof(Index));
-        }
-
-        private async Task<bool> CityExists(int id)
-        {
-            return await _context.Cities.AnyAsync(e => e.ID == id);
         }
     }
 }
